@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.amdin.menuselector.MainActivity">
+
+    <ImageButton
+        android:id="@+id/displaybtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="83dp"
+        android:layout_marginTop="128dp"
+        android:onClick="onButtonDisplay"
+        app:srcCompat="?android:attr/fingerprintAuthDrawable" />
+
+    <ImageButton
+        android:id="@+id/selectbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/displaybtn"
+        android:layout_marginStart="91dp"
+        android:layout_toEndOf="@+id/displaybtn"
+        android:onClick="onButtonSelect"
+        app:srcCompat="@android:drawable/btn_star_big_on" />
+
+    <ImageButton
+        android:id="@+id/foodsettingbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/displaybtn"
+        android:layout_marginTop="85dp"
+        android:layout_toStartOf="@+id/selectbtn"
+        android:onClick="onButtonFoodSetting"
+        app:srcCompat="@mipmap/ic_launcher" />
+
+    <ImageButton
+        android:id="@+id/settingbtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/selectbtn"
+        android:layout_alignTop="@+id/foodsettingbtn"
+        android:onClick="onButtonSetting"
+        app:srcCompat="@android:drawable/btn_star_big_on" />
+
+</RelativeLayout>
