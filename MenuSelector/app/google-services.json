@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "807074013071",
+    "firebase_url": "https://today-menu-selector.firebaseio.com",
+    "project_id": "today-menu-selector",
+    "storage_bucket": "today-menu-selector.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:807074013071:android:0d10ce60e13481de",
+        "android_client_info": {
+          "package_name": "com.example.amdin.menuselector"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "807074013071-jbguclvfkn960khjkbl0a6upt67i97cs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzT8OIA9mBrLGVXw6Ydd4RZKqJW2wizv4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
