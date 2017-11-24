@@ -10,6 +10,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -66,10 +69,21 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onButtonLogin(View v){
         // 로그인 메소드 만들고 if문 추가할것!!!!!!
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        intent.putExtra("id",editId.getText().toString());
-        intent.putExtra("pass",editPass.getText().toString());
-        startActivity(intent);
+        String email = ((EditText)findViewById(R.id.editId)).getText().toString();
+        String password = ((EditText)findViewById(R.id.editPass)).getText().toString();
+        mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+
+                if(!task.isSuccessful()){
+                    Toast.makeText(LoginActivity.this,"로그인 실패",Toast.LENGTH_SHORT).show();
+                }
+                else if(task.isSuccessful()){
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(intent);
+                }
+            }
+        });
     }
 
     public void onButtonSignUp(View v){
