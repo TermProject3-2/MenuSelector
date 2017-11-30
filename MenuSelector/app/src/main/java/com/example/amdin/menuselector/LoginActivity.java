@@ -102,25 +102,25 @@ public class LoginActivity extends AppCompatActivity {
 
     public class AlarmHATT {
         private Context context;
-
+        private AlarmManager am;
         public AlarmHATT(Context context) {
             this.context = context;
         }
 
         public void Alarm() {
-            AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             Intent intent = new Intent(LoginActivity.this, BroadcastD.class);
 
             PendingIntent sender = PendingIntent.getBroadcast(LoginActivity.this, 0, intent, 0);
-            long period = 1000 * 5;
-            long after = 1000 * 5;
             Calendar calendar = Calendar.getInstance();
             //알람시간 calendar에 set해주기
 
-            calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), 17, 35, 0);
-
+            calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), 18, 19, 0);
             //알람 예약
+            am.cancel(sender);
+
             am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);
+            am.cancel(sender);
         }
     }
 }
