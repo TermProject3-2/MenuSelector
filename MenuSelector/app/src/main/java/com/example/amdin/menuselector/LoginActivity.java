@@ -1,5 +1,8 @@
 package com.example.amdin.menuselector;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.amdin.menuselector.myAlarm.BroadcastD;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -17,6 +21,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import org.w3c.dom.Text;
+
+import java.util.Calendar;
 
 public class LoginActivity extends AppCompatActivity {
     TextView textId;
@@ -30,11 +36,13 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
         mAuth = FirebaseAuth.getInstance();
         textId = (TextView)findViewById(R.id.textId);
         textPass = (TextView)findViewById(R.id.textPass);
         editId = (EditText)findViewById(R.id.editId);
         editPass = (EditText)findViewById(R.id.editPass);
+        new AlarmHATT(getApplicationContext()).Alarm();
 
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -89,5 +97,30 @@ public class LoginActivity extends AppCompatActivity {
     public void onButtonSignUp(View v){
         Intent intent = new Intent(getApplicationContext(), SingUpActivity.class);
         startActivity(intent);
+    }
+
+
+    public class AlarmHATT {
+        private Context context;
+
+        public AlarmHATT(Context context) {
+            this.context = context;
+        }
+
+        public void Alarm() {
+            AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            Intent intent = new Intent(LoginActivity.this, BroadcastD.class);
+
+            PendingIntent sender = PendingIntent.getBroadcast(LoginActivity.this, 0, intent, 0);
+            long period = 1000 * 5;
+            long after = 1000 * 5;
+            Calendar calendar = Calendar.getInstance();
+            //알람시간 calendar에 set해주기
+
+            calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), 17, 35, 0);
+
+            //알람 예약
+            am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);
+        }
     }
 }
