@@ -4,34 +4,63 @@ package com.example.amdin.menuselector.myRecycler;
  * Created by amdin on 2017-11-22.
  */
 
+import android.graphics.Bitmap;
+import android.util.Log;
+
 import java.util.ArrayList;
 
 public class Contact {
-    private String mName;
-    private boolean mOnline;
+    private String menuName;
+    private boolean personalPreference;
+    private Bitmap ImageBitmap;
+    private int likeNum;
 
-    public Contact(String name, boolean online) {
-        mName = name;
-        mOnline = online;
+    public Contact(String mName, boolean personalPreference, Bitmap ImageBitmap, int likeNum) {
+        this.menuName = mName;
+        this.personalPreference = personalPreference;
+        this.ImageBitmap = ImageBitmap;
+        this.likeNum = likeNum;
+
     }
 
-    public String getName() {
-        return mName;
+    public String getPreferenceByString(){
+        if(personalPreference)
+            return "like";
+        else
+            return "hate";
     }
 
-    public boolean isOnline() {
-        return mOnline;
+    public String getMenuName() {
+        return menuName;
     }
 
-    private static int lastContactId = 0;
-
-    public static ArrayList<Contact> createContactsList(int numContacts) {
-        ArrayList<Contact> contacts = new ArrayList<Contact>();
-
-        for (int i = 1; i <= numContacts; i++) {
-            contacts.add(new Contact("Person " + ++lastContactId, i <= numContacts / 2));
-        }
-
-        return contacts;
+    public void setMenuName(String menuName) {
+        this.menuName = menuName;
     }
+
+    public boolean isPersonalPreference() {
+        return personalPreference;
+    }
+
+    public void setPersonalPreference(boolean personalPreference) {
+        this.personalPreference = personalPreference;
+    }
+
+    public Bitmap getImageBitmap() {
+        return ImageBitmap;
+    }
+
+    public void setImageBitmap(Bitmap imageBitmap) {
+        ImageBitmap = imageBitmap;
+    }
+
+    public int getLikeNum() {
+        return likeNum;
+    }
+
+    public void setLikeNum(int likeNum) {
+        this.likeNum = likeNum;
+    }
+
+
 }
