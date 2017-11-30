@@ -9,7 +9,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
+import android.view.WindowManager;
 
 import com.example.amdin.menuselector.myRecycler.Contact;
 import com.example.amdin.menuselector.myRecycler.ContactsAdapter;
@@ -26,6 +29,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
 
 public class DisplayActivity extends AppCompatActivity {
 
@@ -47,6 +51,16 @@ public class DisplayActivity extends AppCompatActivity {
 
         final DatabaseReference myRef = firebaseDatabase.getReference("MenuList");
 
+        for(int i = 4; i < 20; i++) {
+            String key = myRef.child("menu" + i).getKey();
+            HashMap<String, Object> postValues = new HashMap<>();
+            postValues.put("MenuName", "menu"+i);
+            postValues.put("ImageURI", "gs://today-menu-selector.appspot.com/menu2.bmp");
+            postValues.put("LikeNum", "0");
+            myRef.child(key).setValue(postValues);
+
+        }
+
 
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -54,7 +68,7 @@ public class DisplayActivity extends AppCompatActivity {
 
                 int menuNum = Integer.parseInt(dataSnapshot.child("MenuNum").getValue().toString());
                 // menuNum이 메뉴개수를 나타냄 메뉴를 추가함에 따라 menuNum 증가 를 구현해야함
-                for(int i = 0; i < menuNum; i++) {
+                for(int i = 0; i < 20; i++) {
                     String menuName = dataSnapshot.child("menu" + i).child("MenuName").getValue().toString();
                     String imageURI = dataSnapshot.child("menu" + i).child("ImageURI").getValue().toString();
                     int likeNum = Integer.parseInt(dataSnapshot.child("menu" + i).child("LikeNum").getValue().toString());
@@ -79,7 +93,10 @@ public class DisplayActivity extends AppCompatActivity {
 
     }
     */
-       public Bitmap extractionImageFromStorage(final String menuName, String imageURI, final int likeNum, final Context context) {
+       public void extractionImageFromStorage(final String menuName, String imageURI, final int likeNum, final Context context) {
+
+           final DisplayMetrics display = new DisplayMetrics();
+           getWindowManager().getDefaultDisplay().getMetrics(display);
 
            StorageReference storageRef = mFirebaseStorage.getReferenceFromUrl
                 (imageURI);
@@ -88,10 +105,38 @@ public class DisplayActivity extends AppCompatActivity {
             @Override
             public void onSuccess(byte[] bytes) {
                 Log.d("Image load", "getBytes Success");
-                bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inJustDecodeBounds = true;
+                bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
+
+                float widthScale  = options.outWidth / display.widthPixels;
+                float heightScale = options.outHeight / display.heightPixels;
+                float scale =  widthScale > heightScale ? widthScale : heightScale;
+
+                if(scale >= 8) {
+                    options.inSampleSize = 8;
+                }
+                else if(scale >= 6) {
+                    options.inSampleSize = 6;
+                }
+
+                else if(scale >= 4) {
+                    options.inSampleSize = 4;
+                }
+                else if(scale >= 2) {
+                    options.inSampleSize = 2;
+                }
+                else
+                    options.inSampleSize = 1;
+                options.inJustDecodeBounds = false;
+
+                bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
+                System.out.println(bmp.getWidth() + " / " + bmp.getHeight());
+                Bitmap resizedBmp = Bitmap.createScaledBitmap(bmp, 380, 300, true);
 
                 Contact contact = new Contact(menuName, true,
-                        bmp, likeNum);
+                        resizedBmp, likeNum);
 
                 contacts.add(contact);
 
@@ -124,8 +169,6 @@ public class DisplayActivity extends AppCompatActivity {
          });
            if(bmp == null)
                Log.d("BMP return", "BMP = NULL");
-
-         return  bmp;
        }
 
     }
