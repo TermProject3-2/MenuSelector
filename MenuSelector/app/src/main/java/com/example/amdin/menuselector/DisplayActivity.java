@@ -38,7 +38,8 @@ public class DisplayActivity extends AppCompatActivity {
     private Bitmap bmp;
     private RecyclerView rvContacts;
     private FirebaseDatabase firebaseDatabase;
-
+    private DatabaseReference myRef;
+    private int menuNum;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,32 +48,40 @@ public class DisplayActivity extends AppCompatActivity {
         rvContacts = (RecyclerView) findViewById(R.id.rvContacts);
         mFirebaseStorage = FirebaseStorage.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
-        contacts = new ArrayList<Contact>();
+        menuNum = 0; // menuNum 읽어오기 실패를 대비해서 일단 0으로 초기화
+        myRef = firebaseDatabase.getReference("MenuList");
 
-        final DatabaseReference myRef = firebaseDatabase.getReference("MenuList");
 
-        for(int i = 4; i < 20; i++) {
+        /*
+        for(int i = 0; i < 20; i++) {
             String key = myRef.child("menu" + i).getKey();
             HashMap<String, Object> postValues = new HashMap<>();
             postValues.put("MenuName", "menu"+i);
             postValues.put("ImageURI", "gs://today-menu-selector.appspot.com/menu2.bmp");
             postValues.put("LikeNum", "0");
+            postValues.put("Preference", "Nomal");
             myRef.child(key).setValue(postValues);
-
         }
-
+        */
 
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                int menuNum = Integer.parseInt(dataSnapshot.child("MenuNum").getValue().toString());
+                // 이부분 효과가 있는지...?
+                if(contacts != null)
+                    contacts.clear();
+                contacts = new ArrayList<Contact>();
+
+                menuNum = Integer.parseInt(dataSnapshot.child("MenuNum").getValue().toString());
                 // menuNum이 메뉴개수를 나타냄 메뉴를 추가함에 따라 menuNum 증가 를 구현해야함
                 for(int i = 0; i < 20; i++) {
                     String menuName = dataSnapshot.child("menu" + i).child("MenuName").getValue().toString();
                     String imageURI = dataSnapshot.child("menu" + i).child("ImageURI").getValue().toString();
                     int likeNum = Integer.parseInt(dataSnapshot.child("menu" + i).child("LikeNum").getValue().toString());
-                    extractionImageFromStorage(menuName, imageURI, likeNum, getApplicationContext());
+                    String preference = dataSnapshot.child("menu" + i).child("Preference").getValue().toString();
+
+                    extractionImageFromStorage(menuName, imageURI, preference, likeNum, getApplicationContext());
                 }
                 Log.d("Data Chane:", "Success to read value.");
 
@@ -85,6 +94,8 @@ public class DisplayActivity extends AppCompatActivity {
         });
     }
 
+
+
 /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -93,7 +104,7 @@ public class DisplayActivity extends AppCompatActivity {
 
     }
     */
-       public void extractionImageFromStorage(final String menuName, String imageURI, final int likeNum, final Context context) {
+       public void extractionImageFromStorage(final String menuName, String imageURI, final String preference, final int likeNum, final Context context) {
 
            final DisplayMetrics display = new DisplayMetrics();
            getWindowManager().getDefaultDisplay().getMetrics(display);
@@ -132,19 +143,17 @@ public class DisplayActivity extends AppCompatActivity {
                 options.inJustDecodeBounds = false;
 
                 bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
-                System.out.println(bmp.getWidth() + " / " + bmp.getHeight());
-                Bitmap resizedBmp = Bitmap.createScaledBitmap(bmp, 380, 300, true);
+                Bitmap resizedBmp = Bitmap.createScaledBitmap(bmp, 270, 300, true);
 
-                Contact contact = new Contact(menuName, true,
-                        resizedBmp, likeNum);
+                Contact contact = new Contact(menuName, preference, resizedBmp, likeNum);
 
                 contacts.add(contact);
 
                 ContactsAdapter adapter = new ContactsAdapter(context, contacts);
-                // adapter.notifyItemChanged(0);
+
                 rvContacts.setAdapter(adapter);
 
-                StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+                StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
                 rvContacts.setLayoutManager(gridLayoutManager);
 
                 RecyclerView.ItemDecoration itemDecoration = new
@@ -154,21 +163,14 @@ public class DisplayActivity extends AppCompatActivity {
                 // optimizations if all item views are of the same height and width for significantly smoother scrolling:
                 rvContacts.setHasFixedSize(true);
 
-                adapter.notifyItemInserted(0);
-
-                if(bmp != null)
-                    Log.d("BMP instance", "BMP = NOT NULL");
             }
          }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
                 Log.d("Image load", "getBytes Failed");
-                bmp = null;
-
             }
          });
-           if(bmp == null)
-               Log.d("BMP return", "BMP = NULL");
+
        }
 
     }

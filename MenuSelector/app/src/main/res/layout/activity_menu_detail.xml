@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="300dp"
+    android:layout_height="300dp"
+    android:layout_centerInParent="true"
+    tools:context="com.example.amdin.menuselector.MyMenu.MenuDetailActivity">
+
+    <!-- bias 값으로  위치조정가능 -->
+    <ImageView
+        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintVertical_bias="0.1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+
+        android:id="@+id/menuImageInDetail"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@mipmap/ic_launcher_round"
+        tools:layout_editor_absoluteX="38dp"
+        tools:layout_editor_absoluteY="39dp" />
+
+    <TextView
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/menuImageInDetail"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.073"
+
+        android:id="@+id/menuNameInDetail"
+        android:layout_width="96dp"
+        android:layout_height="28dp"
+        android:layout_marginLeft="36dp"
+        android:text="TextView"
+       />
+
+    <TextView
+        android:id="@+id/likeNumInDeatail"
+        android:layout_width="96dp"
+        android:layout_height="28dp"
+
+        android:layout_marginLeft="36dp"
+        android:layout_marginTop="12dp"
+        android:text="TextView"
+        app:layout_constraintLeft_toRightOf="@+id/menuImageInDetail"
+        app:layout_constraintTop_toBottomOf="@+id/menuNameInDetail" />
+
+    <ImageButton
+        android:id="@+id/preferenceButton"
+        android:layout_width="96dp"
+        android:layout_height="28dp"
+        android:layout_marginLeft="36dp"
+
+        android:layout_marginTop="12dp"
+        android:src="@drawable/nomal_like_button"
+        android:text="TextView"
+        app:layout_constraintLeft_toRightOf="@+id/menuImageInDetail"
+        app:layout_constraintTop_toBottomOf="@+id/likeNumInDeatail" />
+
+
+
+</android.support.constraint.ConstraintLayout>

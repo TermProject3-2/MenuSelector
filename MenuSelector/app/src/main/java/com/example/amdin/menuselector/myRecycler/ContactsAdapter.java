@@ -2,19 +2,19 @@ package com.example.amdin.menuselector.myRecycler;
 
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.example.amdin.menuselector.MyMenu.MenuDetailActivity;
 import com.example.amdin.menuselector.R;
-
-import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -83,21 +83,39 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(ContactsAdapter.ViewHolder viewHolder, int position) {
+    public void onBindViewHolder(ContactsAdapter.ViewHolder viewHolder, final int position) {
         Contact contact = mContacts.get(position);
 
-        TextView menuNameView  = viewHolder.menuNameView;
+        final TextView menuNameView  = viewHolder.menuNameView;
         ImageButton imageButton = viewHolder.imageButton;
         TextView likeNumView  = viewHolder.likeNumView;
         TextView personalPreferenceView = viewHolder.personalPreferenceView;
 
-        menuNameView.setText(contact.getMenuName());
-        imageButton.setImageBitmap(contact.getImageBitmap());
-        likeNumView.setText("" + contact.getLikeNum());
+        final String MenuPosition = "" + position;
+        final String MenuName = contact.getMenuName();
+        final Bitmap MenuImageBitMap = contact.getImageBitmap();
+        final String LikeNum = "" + contact.getLikeNum();
+        final String Preference = contact.getPersonalPreference();
 
-        // getPreferenceByString 메소드는 선호할 경우 like 아닐경우 hate를 String으로 리턴
-        personalPreferenceView.setText(contact.getPreferenceByString());
+        menuNameView.setText(MenuName);
+        imageButton.setImageBitmap(MenuImageBitMap);
+        likeNumView.setText(LikeNum);
+        personalPreferenceView.setText(Preference);
 
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                System.out.println("MenuPosition : " + MenuPosition);
+                Intent intent = new Intent(getContext(), MenuDetailActivity.class);
+                intent.putExtra("MenuPosition", MenuPosition);
+                intent.putExtra("MenuName", MenuName);
+                intent.putExtra("MenuImageBitMap", MenuImageBitMap);
+                intent.putExtra("LikeNum", LikeNum);
+                intent.putExtra("Preference", Preference);
+                System.out.println("Null Check " + MenuName + " , " + LikeNum + " , " + Preference + " , ");
+                getContext().startActivity(intent);
+            }
+        });
 
 
         //Button button = viewHolder.messageButton; 버튼 에다가 딜리트를 달아주는 작업 우리는 여기에다가 이미지를 달거야

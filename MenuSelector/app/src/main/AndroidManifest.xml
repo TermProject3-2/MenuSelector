@@ -33,7 +33,15 @@
             android:parentActivityName=".MainActivity" />
         <activity android:name=".SingUpActivity" />
 
-        <receiver android:name=".myAlarm.BroadcastD"></receiver>
+        <receiver android:name=".myAlarm.BroadcastD" />
+
+        <activity android:name=".MyMenu.MenuDetailActivity"
+            android:parentActivityName=".DisplayActivity"
+            android:theme="@style/MenuDetailTheme" >
+            <!--타이틀바를 없앤 Dialog(팝업형)
+             속성을 갖는 styles.xml에서 만든 테마(MenuDetailTheme)를 사용한다.
+            -->
+        </activity>
     </application>
 
 </manifest>

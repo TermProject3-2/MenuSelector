@@ -11,11 +11,11 @@ import java.util.ArrayList;
 
 public class Contact {
     private String menuName;
-    private boolean personalPreference;
+    private String personalPreference;
     private Bitmap ImageBitmap;
     private int likeNum;
 
-    public Contact(String mName, boolean personalPreference, Bitmap ImageBitmap, int likeNum) {
+    public Contact(String mName, String personalPreference, Bitmap ImageBitmap, int likeNum) {
         this.menuName = mName;
         this.personalPreference = personalPreference;
         this.ImageBitmap = ImageBitmap;
@@ -23,12 +23,6 @@ public class Contact {
 
     }
 
-    public String getPreferenceByString(){
-        if(personalPreference)
-            return "like";
-        else
-            return "hate";
-    }
 
     public String getMenuName() {
         return menuName;
@@ -38,11 +32,11 @@ public class Contact {
         this.menuName = menuName;
     }
 
-    public boolean isPersonalPreference() {
+    public String getPersonalPreference() {
         return personalPreference;
     }
 
-    public void setPersonalPreference(boolean personalPreference) {
+    public void setPersonalPreference(String personalPreference) {
         this.personalPreference = personalPreference;
     }
 
