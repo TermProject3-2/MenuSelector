@@ -54,6 +54,8 @@ public class DisplayActivity extends AppCompatActivity {
         menuCount = 0; // menuNum 읽어오기 실패를 대비해서 일단 0으로 초기화
         myRef = firebaseDatabase.getReference("MenuList");
 
+
+
         Intent intent = getIntent();
         id = intent.getExtras().getString("id");
         pass = intent.getExtras().getString("pass");
@@ -124,6 +126,7 @@ public class DisplayActivity extends AppCompatActivity {
                             int likeNum = Integer.parseInt(dataSnapshot.child("LikeNum").getValue().toString());
                             String preference = dataSnapshot.child("Preference").getValue().toString();
                             int menuNum = Integer.parseInt(dataSnapshot.child("MenuNumber").getValue().toString());
+
 
                             notifyToAdapter(menuNum, menuName,imageURI, preference, likeNum);
                             Log.d("Data Chane Every Time:", "Success to read value.");
