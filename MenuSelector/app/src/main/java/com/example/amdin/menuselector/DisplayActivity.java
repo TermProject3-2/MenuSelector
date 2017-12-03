@@ -39,8 +39,11 @@ public class DisplayActivity extends AppCompatActivity {
     private RecyclerView rvContacts;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference myRef;
-    private int menuNum;
+    private int menuCount;
+    private ContactsAdapter adapter;
 
+    private String id;
+    private String pass;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,53 +51,100 @@ public class DisplayActivity extends AppCompatActivity {
         rvContacts = (RecyclerView) findViewById(R.id.rvContacts);
         mFirebaseStorage = FirebaseStorage.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
-        menuNum = 0; // menuNum 읽어오기 실패를 대비해서 일단 0으로 초기화
+        menuCount = 0; // menuNum 읽어오기 실패를 대비해서 일단 0으로 초기화
         myRef = firebaseDatabase.getReference("MenuList");
 
+        Intent intent = getIntent();
+        id = intent.getExtras().getString("id");
+        pass = intent.getExtras().getString("pass");
 
-        /*
+        HashMap<String, Object> postValues = new HashMap<>();
+        postValues.put("id", id);
+        postValues.put("pass", pass);
+
+
+
+/*
+//데이터 삽입용 코드
+        System.out.println("hello id :" + id);
+        HashMap<String, Object> postv = new HashMap<String, Object>();
+        for(int i = 0; i < 20; i++)
+            postv.put("menu"+i, "Nomal");
+        myRef.child("UserList").child("t").setValue(postv);
+
+
         for(int i = 0; i < 20; i++) {
             String key = myRef.child("menu" + i).getKey();
             HashMap<String, Object> postValues = new HashMap<>();
+            postValues.put("MenuNumber", ""+i );
             postValues.put("MenuName", "menu"+i);
             postValues.put("ImageURI", "gs://today-menu-selector.appspot.com/menu2.bmp");
             postValues.put("LikeNum", "0");
             postValues.put("Preference", "Nomal");
             myRef.child(key).setValue(postValues);
         }
-        */
-
-        myRef.addValueEventListener(new ValueEventListener() {
+*/
+        // 처음 초기화를 위해 한번만 menuCount와 각 Contact를 만들고
+        // 리사이클러뷰에 어댑터를 set( contact가 만들어지기 전에 set하면 안되기 때문에 setAdapter는 contacts가 만들어질때마다 불린다.)
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                menuCount = Integer.parseInt(dataSnapshot.child("MenuCount").getValue().toString());
 
-                // 이부분 효과가 있는지...?
-                if(contacts != null)
-                    contacts.clear();
-                contacts = new ArrayList<Contact>();
-
-                menuNum = Integer.parseInt(dataSnapshot.child("MenuNum").getValue().toString());
-                // menuNum이 메뉴개수를 나타냄 메뉴를 추가함에 따라 menuNum 증가 를 구현해야함
-                for(int i = 0; i < 20; i++) {
-                    String menuName = dataSnapshot.child("menu" + i).child("MenuName").getValue().toString();
-                    String imageURI = dataSnapshot.child("menu" + i).child("ImageURI").getValue().toString();
-                    int likeNum = Integer.parseInt(dataSnapshot.child("menu" + i).child("LikeNum").getValue().toString());
-                    String preference = dataSnapshot.child("menu" + i).child("Preference").getValue().toString();
-
-                    extractionImageFromStorage(menuName, imageURI, preference, likeNum, getApplicationContext());
+                for(int i = 0; i <  menuCount; i++) {
+                            String menuName = dataSnapshot.child("menu"+i).child("MenuName").getValue().toString();
+                            String imageURI = dataSnapshot.child("menu"+i).child("ImageURI").getValue().toString();
+                            int likeNum = Integer.parseInt(dataSnapshot.child("menu"+i).child("LikeNum").getValue().toString());
+                            String preference = dataSnapshot.child("menu"+i).child("Preference").getValue().toString();
+                            extractionImageFromStorage(menuName, imageURI, preference, likeNum, getApplicationContext());
+                            Log.d("Data Change for oneTime", "Success to read value.");
                 }
-                Log.d("Data Chane:", "Success to read value.");
-
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.d("Data Chane:", "Failed to read value.");
+                Log.d("Data Change for oneTime", "Failed to read value.");
             }
         });
+
+
+        // 메뉴개수에 변화가 있을경우 모든메뉴의 리스너를 다시 달아준다.
+        // 리스너(DB의 데이터가 변화할 경우 notify하는 기능을 넣은 리스너)를 추가
+         myRef.child("MenuCount").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                menuCount = Integer.parseInt(dataSnapshot.getValue().toString());
+                Log.d("menu count", "Success to read value.");
+
+                for(int i = 0; i <  menuCount; i++) {
+                    myRef.child("menu"+i).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            String menuName = dataSnapshot.child("MenuName").getValue().toString();
+                            String imageURI = dataSnapshot.child("ImageURI").getValue().toString();
+                            int likeNum = Integer.parseInt(dataSnapshot.child("LikeNum").getValue().toString());
+                            String preference = dataSnapshot.child("Preference").getValue().toString();
+                            int menuNum = Integer.parseInt(dataSnapshot.child("MenuNumber").getValue().toString());
+
+                            notifyToAdapter(menuNum, menuName,imageURI, preference, likeNum);
+                            Log.d("Data Chane Every Time:", "Success to read value.");
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            Log.d("Data Chane:", "Failed to read value.");
+                        }
+                    });
+
+                }
+
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d("menu count", "Failed to read value.");
+            }
+        });
+
     }
-
-
 
 /*
     @Override
@@ -104,6 +154,61 @@ public class DisplayActivity extends AppCompatActivity {
 
     }
     */
+       public  void notifyToAdapter(final int menuNum, final String menuName, String imageURI, final String preference, final int likeNum){
+           final DisplayMetrics display = new DisplayMetrics();
+           getWindowManager().getDefaultDisplay().getMetrics(display);
+
+           StorageReference storageRef = mFirebaseStorage.getReferenceFromUrl
+                   (imageURI);
+
+           storageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+               @Override
+               public void onSuccess(byte[] bytes) {
+                   Log.d("Image load", "getBytes Success");
+
+                   BitmapFactory.Options options = new BitmapFactory.Options();
+                   options.inJustDecodeBounds = true;
+                   bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
+
+                   float widthScale = options.outWidth / display.widthPixels;
+                   float heightScale = options.outHeight / display.heightPixels;
+                   float scale = widthScale > heightScale ? widthScale : heightScale;
+
+                   if (scale >= 8) {
+                       options.inSampleSize = 8;
+                   } else if (scale >= 6) {
+                       options.inSampleSize = 6;
+                   } else if (scale >= 4) {
+                       options.inSampleSize = 4;
+                   } else if (scale >= 2) {
+                       options.inSampleSize = 2;
+                   } else
+                       options.inSampleSize = 1;
+                   options.inJustDecodeBounds = false;
+
+                   bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
+                   Bitmap resizedBmp = Bitmap.createScaledBitmap(bmp, 270, 300, true);
+
+                   Contact contact = new Contact(menuName, preference, resizedBmp, likeNum);
+
+                   if(contacts != null)
+                       contacts.set(menuNum, contact);
+                   else
+                       System.out.println("!!!!!!!!!!!!!!! contacts is null !!!!!!!!!!!!!");
+                   if(adapter != null)
+                       adapter.notifyItemChanged(menuNum);
+                   else
+                       System.out.println("!!!!!!!!!!!!!!! adapter is null !!!!!!!!!!!!!");
+               }
+           }).addOnFailureListener(new OnFailureListener() {
+               @Override
+               public void onFailure(@NonNull Exception exception) {
+                   Log.d("Noify : Image load", "getBytes Failed");
+               }
+           });
+       }
+
+
        public void extractionImageFromStorage(final String menuName, String imageURI, final String preference, final int likeNum, final Context context) {
 
            final DisplayMetrics display = new DisplayMetrics();
@@ -145,29 +250,30 @@ public class DisplayActivity extends AppCompatActivity {
                 bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
                 Bitmap resizedBmp = Bitmap.createScaledBitmap(bmp, 270, 300, true);
 
+                if(contacts == null)
+                    contacts = new ArrayList<Contact>();
                 Contact contact = new Contact(menuName, preference, resizedBmp, likeNum);
 
                 contacts.add(contact);
 
-                ContactsAdapter adapter = new ContactsAdapter(context, contacts);
+                if(adapter == null)
+                    adapter = new ContactsAdapter(context, contacts);
 
                 rvContacts.setAdapter(adapter);
-
                 StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
                 rvContacts.setLayoutManager(gridLayoutManager);
 
                 RecyclerView.ItemDecoration itemDecoration = new
                         MarginItemDecoration(4);
                 rvContacts.addItemDecoration(itemDecoration);
-
-                // optimizations if all item views are of the same height and width for significantly smoother scrolling:
+                    // optimizations if all item views are of the same height and width for significantly smoother scrolling:
                 rvContacts.setHasFixedSize(true);
 
             }
          }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                Log.d("Image load", "getBytes Failed");
+                Log.d("extraction : Image load", "getBytes Failed");
             }
          });
 

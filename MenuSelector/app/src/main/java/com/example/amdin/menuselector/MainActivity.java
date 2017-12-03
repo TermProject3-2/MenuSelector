@@ -29,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
     //학식 보기 버튼
     public void onButtonDisplay(View v){
         Intent intent = new Intent(getApplicationContext(),DisplayActivity.class);
+        intent.putExtra("id", id);
+        intent.putExtra("pass", pass);
         startActivity(intent);
     }
 

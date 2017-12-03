@@ -77,8 +77,8 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onButtonLogin(View v){
         // 로그인 메소드 만들고 if문 추가할것!!!!!!
-        String email = ((EditText)findViewById(R.id.editId)).getText().toString();
-        String password = ((EditText)findViewById(R.id.editPass)).getText().toString();
+        final String email = ((EditText)findViewById(R.id.editId)).getText().toString();
+        final String password = ((EditText)findViewById(R.id.editPass)).getText().toString();
         mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -88,6 +88,8 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 else if(task.isSuccessful()){
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    intent.putExtra("id",email);
+                    intent.putExtra("pass", password);
                     startActivity(intent);
                 }
             }
