@@ -20,6 +20,7 @@ import java.util.List;
 
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHolder> {
 
+    private String id;
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
@@ -60,9 +61,10 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     private Context mContext;
 
 
-    public ContactsAdapter(Context context, List<Contact> contacts) {
+    public ContactsAdapter(Context context, List<Contact> contacts, String id) {
         mContacts = contacts;
         mContext = context;
+        this.id = id;
     }
 
 
@@ -112,6 +114,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
                 intent.putExtra("MenuImageBitMap", MenuImageBitMap);
                 intent.putExtra("LikeNum", LikeNum);
                 intent.putExtra("Preference", Preference);
+                intent.putExtra("Id", id);
                 System.out.println("Null Check " + MenuName + " , " + LikeNum + " , " + Preference + " , ");
                 getContext().startActivity(intent);
             }

@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.amdin.menuselector.AccessDB.ChangeDB;
 import com.example.amdin.menuselector.R;
@@ -36,6 +37,7 @@ public class MenuDetailActivity extends AppCompatActivity {
     private Bitmap menuImageBitMap;
     private String likeNum;
     private String preference;
+    private String id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +62,7 @@ public class MenuDetailActivity extends AppCompatActivity {
         menuImageBitMap = (Bitmap)intent.getParcelableExtra("MenuImageBitMap");
         likeNum = intent.getExtras().getString("LikeNum");
         preference = intent.getExtras().getString("Preference");
+        id = intent.getExtras().getString("Id");
 
         menuNameView.setText(menuName);
         menuImageView.setImageBitmap(menuImageBitMap);
@@ -74,15 +77,17 @@ public class MenuDetailActivity extends AppCompatActivity {
         preferenceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                if(preference.equals("Nomal")) {
-                    new ChangeDB().changeDataForDB(myRef, menuPosition, "x", "x", "x", "Like");
+                Toast.makeText(MenuDetailActivity.this, preference, Toast.LENGTH_SHORT).show();
+                if(preference.equals("Normal")) {
+                    new ChangeDB().changeDataForDB(myRef, menuPosition, "x", "x", "+", "Like", id);
                     preference = "Like"; //preference 객체는 전달받은 복사값일 뿐 실제 DB의 preference의 레퍼런스가 아니다.
                 }
                 else {
-                    new ChangeDB().changeDataForDB(myRef, menuPosition, "x", "x", "x", "Nomal");
-                    preference = "Nomal";
+                    System.out.println("resultFFF : " + preference);
+                    new ChangeDB().changeDataForDB(myRef, menuPosition, "x", "x", "-", "Normal", id);
+                    preference = "Normal";
                 }
+
                 if(preference.equals("Like"))
                     preferenceButton.setImageResource(R.drawable.active_like_butoon);
                 else
@@ -93,8 +98,8 @@ public class MenuDetailActivity extends AppCompatActivity {
         recommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(recommandOnOf)
-                    new ChangeDB().changeDataForDB(myRef, menuPosition, "x", "x", "x", "Like");
+                //if(recommandOnOf)
+                   // new ChangeDB().changeDataForDB(myRef, menuPosition, "x", "x", "x", "Like");
 
             }
         });

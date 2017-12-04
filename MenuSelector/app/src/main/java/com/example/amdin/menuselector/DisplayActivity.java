@@ -11,8 +11,6 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
-import android.view.WindowManager;
 
 import com.example.amdin.menuselector.myRecycler.Contact;
 import com.example.amdin.menuselector.myRecycler.ContactsAdapter;
@@ -42,8 +40,10 @@ public class DisplayActivity extends AppCompatActivity {
     private int menuCount;
     private ContactsAdapter adapter;
 
+    private  String[] preference;
     private String id;
     private String pass;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,10 +51,7 @@ public class DisplayActivity extends AppCompatActivity {
         rvContacts = (RecyclerView) findViewById(R.id.rvContacts);
         mFirebaseStorage = FirebaseStorage.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
-        menuCount = 0; // menuNum 읽어오기 실패를 대비해서 일단 0으로 초기화
         myRef = firebaseDatabase.getReference("MenuList");
-
-
 
         Intent intent = getIntent();
         id = intent.getExtras().getString("id");
@@ -64,8 +61,6 @@ public class DisplayActivity extends AppCompatActivity {
         postValues.put("id", id);
         postValues.put("pass", pass);
 
-
-
 /*
 //데이터 삽입용 코드
         System.out.println("hello id :" + id);
@@ -74,6 +69,10 @@ public class DisplayActivity extends AppCompatActivity {
             postv.put("menu"+i, "Nomal");
         myRef.child("UserList").child("t").setValue(postv);
 
+
+ myRef.child("UserList").child(id).child("preference").child("1").setValue("1");
+        myRef.child("UserList").child(id).child("preference").child("3").setValue("3");
+        myRef.child("UserList").child(id).child("preference").child("5").setValue("5");
 
         for(int i = 0; i < 20; i++) {
             String key = myRef.child("menu" + i).getKey();
@@ -86,6 +85,37 @@ public class DisplayActivity extends AppCompatActivity {
             myRef.child(key).setValue(postValues);
         }
 */
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                menuCount = Integer.parseInt(dataSnapshot.child("MenuCount").getValue().toString());
+                preference = new String[menuCount];
+                System.out.println("menuCount! : " + menuCount);
+
+                myRef.child("UserList").child(id).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (int i = 0; i < menuCount; i++) {
+                            System.out.println("UserListChanged!!!!!!!!!! : " + menuCount);
+                            if (dataSnapshot.child("preference").child("" + i).exists()){
+                                preference[i] = dataSnapshot.child("preference").child(""+i).getValue().toString();
+                            }
+                            else
+                                preference[i] = null;
+                        }
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
         // 처음 초기화를 위해 한번만 menuCount와 각 Contact를 만들고
         // 리사이클러뷰에 어댑터를 set( contact가 만들어지기 전에 set하면 안되기 때문에 setAdapter는 contacts가 만들어질때마다 불린다.)
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -94,12 +124,16 @@ public class DisplayActivity extends AppCompatActivity {
                 menuCount = Integer.parseInt(dataSnapshot.child("MenuCount").getValue().toString());
 
                 for(int i = 0; i <  menuCount; i++) {
-                            String menuName = dataSnapshot.child("menu"+i).child("MenuName").getValue().toString();
-                            String imageURI = dataSnapshot.child("menu"+i).child("ImageURI").getValue().toString();
-                            int likeNum = Integer.parseInt(dataSnapshot.child("menu"+i).child("LikeNum").getValue().toString());
-                            String preference = dataSnapshot.child("menu"+i).child("Preference").getValue().toString();
-                            extractionImageFromStorage(menuName, imageURI, preference, likeNum, getApplicationContext());
-                            Log.d("Data Change for oneTime", "Success to read value.");
+                    int menuNum = Integer.parseInt(dataSnapshot.child("menu"+i).child("MenuNumber").getValue().toString());
+                    String menuName = dataSnapshot.child("menu"+i).child("MenuName").getValue().toString();
+                    String imageURI = dataSnapshot.child("menu"+i).child("ImageURI").getValue().toString();
+                    int likeNum = Integer.parseInt(dataSnapshot.child("menu"+i).child("LikeNum").getValue().toString());
+
+                    if(preference[i] != null)
+                        extractionImageFromStorage(menuName, imageURI,"Like", likeNum, getApplicationContext());
+                    else
+                        extractionImageFromStorage(menuName, imageURI,"Normal", likeNum, getApplicationContext());
+                    Log.d("Data Change for oneTime", "Success to read value.");
                 }
             }
             @Override
@@ -111,24 +145,25 @@ public class DisplayActivity extends AppCompatActivity {
 
         // 메뉴개수에 변화가 있을경우 모든메뉴의 리스너를 다시 달아준다.
         // 리스너(DB의 데이터가 변화할 경우 notify하는 기능을 넣은 리스너)를 추가
-         myRef.child("MenuCount").addValueEventListener(new ValueEventListener() {
+        myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                menuCount = Integer.parseInt(dataSnapshot.getValue().toString());
-                Log.d("menu count", "Success to read value.");
 
                 for(int i = 0; i <  menuCount; i++) {
-                    myRef.child("menu"+i).addValueEventListener(new ValueEventListener() {
+                    myRef.child("menu"+i).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             String menuName = dataSnapshot.child("MenuName").getValue().toString();
                             String imageURI = dataSnapshot.child("ImageURI").getValue().toString();
                             int likeNum = Integer.parseInt(dataSnapshot.child("LikeNum").getValue().toString());
-                            String preference = dataSnapshot.child("Preference").getValue().toString();
                             int menuNum = Integer.parseInt(dataSnapshot.child("MenuNumber").getValue().toString());
 
-
-                            notifyToAdapter(menuNum, menuName,imageURI, preference, likeNum);
+                            if(preference[menuNum] != null)
+                                notifyToAdapter(menuNum, menuName,imageURI, "Like", likeNum);
+                            else
+                                notifyToAdapter(menuNum, menuName,imageURI, "Normal", likeNum);
+                            // HashMap<String, Object> preference = (HashMap<String, Object>)preferenceMap.get("menu"+menuNum);
+                            //notifyToAdapter(menuNum, menuName,imageURI, preference.get("preference").toString(), likeNum);
                             Log.d("Data Chane Every Time:", "Success to read value.");
                         }
 
@@ -149,14 +184,7 @@ public class DisplayActivity extends AppCompatActivity {
 
     }
 
-/*
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return super.onCreateOptionsMenu(menu);
 
-    }
-    */
        public  void notifyToAdapter(final int menuNum, final String menuName, String imageURI, final String preference, final int likeNum){
            final DisplayMetrics display = new DisplayMetrics();
            getWindowManager().getDefaultDisplay().getMetrics(display);
@@ -260,7 +288,7 @@ public class DisplayActivity extends AppCompatActivity {
                 contacts.add(contact);
 
                 if(adapter == null)
-                    adapter = new ContactsAdapter(context, contacts);
+                    adapter = new ContactsAdapter(context, contacts, id);
 
                 rvContacts.setAdapter(adapter);
                 StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);

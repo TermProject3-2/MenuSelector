@@ -18,10 +18,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.StringTokenizer;
 
 public class MainActivity extends AppCompatActivity {
-    String id,pass;
+    private String id,pass;
+    private HashMap<String, Object> preferenceMap;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +33,10 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = getIntent();
         id = intent.getStringExtra("id");
         pass = intent.getStringExtra("pass");
+
+        StringTokenizer st = new StringTokenizer(id,".");
+        id = st.nextToken();
+
         Log.d("sdjang","before");
         AlarmHATT alarmHATT =  new AlarmHATT(getApplicationContext(),id);
         alarmHATT.Alarm();
@@ -36,16 +44,15 @@ public class MainActivity extends AppCompatActivity {
         Log.d("sdjang","after");
 
 
-
-
     }
 
     //학식 보기 버튼
     public void onButtonDisplay(View v){
+
         Intent intent = new Intent(getApplicationContext(),DisplayActivity.class);
         intent.putExtra("id", id);
         intent.putExtra("pass", pass);
-        startActivity(intent);
+                startActivity(intent);
     }
 
     //학식 뽑기 버튼

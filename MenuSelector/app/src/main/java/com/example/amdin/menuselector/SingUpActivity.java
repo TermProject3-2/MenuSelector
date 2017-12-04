@@ -17,8 +17,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -36,6 +39,7 @@ public class SingUpActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener authStateListener;
     private FirebaseUser user;
+    private int menuCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,12 +82,33 @@ public class SingUpActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = firebaseDatabase.getReference("MenuList");
+
+        myRef.child("MenuCount").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                menuCount = Integer.parseInt(dataSnapshot.getValue().toString());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         if (authStateListener!= null) {
             mAuth.removeAuthStateListener(authStateListener);
         }
     }
+
+
 
     public void onButtonSignUp(View v){
         String stId = editId.getText().toString();
@@ -101,16 +126,21 @@ public class SingUpActivity extends AppCompatActivity {
             }
         }
         //sign up을 할때 해당 계정을 UserList에다가 만들어서 넣어주고 모든 메뉴의 값을 Normal로 초기화
-        /*
+
         HashMap<String, Object> postv = new HashMap<String, Object>();
-        for(int i = 0; i < 20; i++)
-            postv.put("menu"+i, "Nomal");
-        postv.put("alarm","off");
-        postv.put("alarmtext","");
-        postv.put("alarmhours",0);
-        postv.put("alarmmin",0);
+
+        for(int i = 0; i < menuCount; i++){
+            HashMap<String, Object> pt = new HashMap<String, Object>();
+            pt.put("MenuNumber", ""+i);
+            pt.put("preference", "Normal");
+            postv.put("menu"+i, pt);
+            postv.put("alarm","off");
+            postv.put("alarmtext","");
+            postv.put("alarmhours",0);
+            postv.put("alarmmin",0);
+        }
         myRef.child("UserList").child(stId).setValue(postv);
-       */ //email 은 realTimeDB에 저장이 되지 않는다. 마지막 . 만 빼고 저장 할까?
+        //email 은 realTimeDB에 저장이 되지 않는다. 마지막 . 만 빼고 저장 할까?
 
 
 
