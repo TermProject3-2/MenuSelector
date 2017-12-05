@@ -11,6 +11,7 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.amdin.menuselector.myRecycler.Contact;
 import com.example.amdin.menuselector.myRecycler.ContactsAdapter;
@@ -27,7 +28,6 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
 
 public class DisplayActivity extends AppCompatActivity {
 
@@ -57,82 +57,50 @@ public class DisplayActivity extends AppCompatActivity {
         id = intent.getExtras().getString("id");
         pass = intent.getExtras().getString("pass");
 
-        HashMap<String, Object> postValues = new HashMap<>();
-        postValues.put("id", id);
-        postValues.put("pass", pass);
+        System.out.println("iidd : " + id );
 
 /*
-//데이터 삽입용 코드
-        System.out.println("hello id :" + id);
-        HashMap<String, Object> postv = new HashMap<String, Object>();
-        for(int i = 0; i < 20; i++)
-            postv.put("menu"+i, "Nomal");
-        myRef.child("UserList").child("t").setValue(postv);
-
-
- myRef.child("UserList").child(id).child("preference").child("1").setValue("1");
-        myRef.child("UserList").child(id).child("preference").child("3").setValue("3");
-        myRef.child("UserList").child(id).child("preference").child("5").setValue("5");
-*/
-/*
-        for(int i = 0; i < 10; i++) {
+메뉴넣기용 데이터 삽입코드
+        for(int i = 0; i < 4; i++) {
             HashMap<String, Object> posts = new HashMap<>();
             posts.put("MenuNumber", ""+i );
             posts.put("MenuName", "menu"+i);
             posts.put("ImageURI", "gs://today-menu-selector.appspot.com/menu2.bmp");
             posts.put("LikeNum", "0");
+            posts.put("Price", "3000");
             myRef.child("menu"+i).setValue(posts);
         }
 */
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                menuCount = Integer.parseInt(dataSnapshot.child("MenuCount").getValue().toString());
-                preference = new String[menuCount];
-                System.out.println("menuCount! : " + menuCount);
-
-                myRef.child("UserList").child(id).addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        for (int i = 0; i < menuCount; i++) {
-                            System.out.println("UserListChanged!!!!!!!!!! : " + menuCount);
-                            if (dataSnapshot.child("preference").child("" + i).exists()){
-                                preference[i] = dataSnapshot.child("preference").child(""+i).getValue().toString();
-                            }
-                            else
-                                preference[i] = null;
-                        }
-                    }
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
+        // 아래의 A.코드가 이 리스너보다 위에 있어도 이 리스너의 preference가 먼저 참조 되는경우가 있다.
         // 처음 초기화를 위해 한번만 menuCount와 각 Contact를 만들고
         // 리사이클러뷰에 어댑터를 set( contact가 만들어지기 전에 set하면 안되기 때문에 setAdapter는 contacts가 만들어질때마다 불린다.)
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 menuCount = Integer.parseInt(dataSnapshot.child("MenuCount").getValue().toString());
-
+                preference = new String[menuCount];
+                System.out.println("id test : " + id);
                 for(int i = 0; i <  menuCount; i++) {
+
+                    if (dataSnapshot.child("UserList").child(id).child("preference").child("" + i).exists()){
+                        preference[i] = dataSnapshot.child("UserList").child(id).child("preference").child(""+i).getValue().toString();
+                        System.out.println("preference get ! : " + preference[i]);
+                    }
+                    else {
+                        preference[i] = null;
+                    }
+
                     if(dataSnapshot.child("menu"+i).exists()) { //메뉴 키가 존재할때만 데이터생성
                         int menuNum = Integer.parseInt(dataSnapshot.child("menu" + i).child("MenuNumber").getValue().toString());
                         String menuName = dataSnapshot.child("menu" + i).child("MenuName").getValue().toString();
                         String imageURI = dataSnapshot.child("menu" + i).child("ImageURI").getValue().toString();
                         int likeNum = Integer.parseInt(dataSnapshot.child("menu" + i).child("LikeNum").getValue().toString());
+                        int price = Integer.parseInt(dataSnapshot.child("menu" + i).child("Price").getValue().toString());
 
                         if (preference[i] != null)
-                            extractionImageFromStorage(menuName, imageURI, "Like", likeNum, getApplicationContext());
+                            extractionImageFromStorage(i, menuName, imageURI, "Like", likeNum, price, getApplicationContext());
                         else
-                            extractionImageFromStorage(menuName, imageURI, "Normal", likeNum, getApplicationContext());
+                            extractionImageFromStorage(i, menuName, imageURI, "Normal", likeNum, price, getApplicationContext());
                         Log.d("Data Change for oneTime", "Success to read value.");
                     }
                 }
@@ -143,13 +111,42 @@ public class DisplayActivity extends AppCompatActivity {
             }
         });
 
+        // A.  선호도 변화시 preference 배열을 다시 받기 위해
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                menuCount = Integer.parseInt(dataSnapshot.child("MenuCount").getValue().toString());
+                preference = new String[menuCount];
 
+                myRef.child("UserList").child(id).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (int i = 0; i < menuCount; i++) {
+                            if (dataSnapshot.child("preference").child("" + i).exists()){
+                                preference[i] = dataSnapshot.child("preference").child(""+i).getValue().toString();
+                                System.out.println("preference get ! : " + preference[i]);
+                            }
+                            else
+                                preference[i] = null;
+                        }
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
+
+
+        // myRef에 리스너를 달았기 때문에 UserList의 선호도 변화에도 실행이 되어 선호도 변화를 적용할 수 있다.
         // 메뉴개수에 변화가 있을경우 모든메뉴의 리스너를 다시 달아준다.
-        // 리스너(DB의 데이터가 변화할 경우 notify하는 기능을 넣은 리스너)를 추가
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
                 for(int i = 0; i <  menuCount; i++) {
                     if(dataSnapshot.child("menu"+i).exists()) { //메뉴 키가 존재할때만 데이터 변화 적용
                         myRef.child("menu" + i).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -158,17 +155,17 @@ public class DisplayActivity extends AppCompatActivity {
                                 String menuName = dataSnapshot.child("MenuName").getValue().toString();
                                 String imageURI = dataSnapshot.child("ImageURI").getValue().toString();
                                 int likeNum = Integer.parseInt(dataSnapshot.child("LikeNum").getValue().toString());
+                                int price = Integer.parseInt(dataSnapshot.child("Price").getValue().toString());
                                 int menuNum = Integer.parseInt(dataSnapshot.child("MenuNumber").getValue().toString());
 
-                                if (preference[menuNum] != null)
-                                    notifyToAdapter(menuNum, menuName, imageURI, "Like", likeNum);
+                                if (preference[menuNum] != null) {
+                                    notifyToAdapter(menuNum, menuName, imageURI, "Like", likeNum, price);
+                                }
                                 else
-                                    notifyToAdapter(menuNum, menuName, imageURI, "Normal", likeNum);
-                                // HashMap<String, Object> preference = (HashMap<String, Object>)preferenceMap.get("menu"+menuNum);
-                                //notifyToAdapter(menuNum, menuName,imageURI, preference.get("preference").toString(), likeNum);
+                                    notifyToAdapter(menuNum, menuName, imageURI, "Normal", likeNum, price);
+
                                 Log.d("Data Chane Every Time:", "Success to read value.");
                             }
-
                             @Override
                             public void onCancelled(DatabaseError databaseError) {
                                 Log.d("Data Chane:", "Failed to read value.");
@@ -176,7 +173,6 @@ public class DisplayActivity extends AppCompatActivity {
                         });
                     }
                 }
-
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -186,86 +182,27 @@ public class DisplayActivity extends AppCompatActivity {
 
     }
 
-
-       public  void notifyToAdapter(final int menuNum, final String menuName, String imageURI, final String preference, final int likeNum){
-         if(contacts != null && contacts.size() >= menuNum) {
+    //이미지 URI의 변경으로 인한 사진변경은 즉시반영 안함. 이전 액티비티를 갔다가 다시 돌아올때 적용
+    public  void notifyToAdapter(final int menuNum, final String menuName, String imageURI, final String preference, final int likeNum, int price){
+         if(contacts != null) {
+             System.out.println("contact is null !!!!!!!!!!!!!");
              Contact contact = contacts.get(menuNum);
              contact.setLikeNum(likeNum);
              contact.setMenuName(menuName);
              contact.setPersonalPreference(preference);
+             contact.setPrice(price);
+
              contacts.set(menuNum, contact);
-             if(adapter != null)
+
+             if (adapter != null)
                  adapter.notifyItemChanged(menuNum);
              else
                  System.out.println("!!!!!!!!!!!!!!! adapter is null !!!!!!!!!!!!!");
          }
-
-
-           /*
-           final DisplayMetrics display = new DisplayMetrics();
-           getWindowManager().getDefaultDisplay().getMetrics(display);
-
-           StorageReference storageRef = mFirebaseStorage.getReferenceFromUrl
-                   (imageURI);
-            */
-           /*
-           storageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-               @Override
-               public void onSuccess(byte[] bytes) {
-                   Log.d("Image load", "getBytes Success");
-
-                   BitmapFactory.Options options = new BitmapFactory.Options();
-                   options.inJustDecodeBounds = true;
-                   bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
-
-                   float widthScale = options.outWidth / display.widthPixels;
-                   float heightScale = options.outHeight / display.heightPixels;
-                   float scale = widthScale > heightScale ? widthScale : heightScale;
-
-                   if (scale >= 8) {
-                       options.inSampleSize = 8;
-                   } else if (scale >= 6) {
-                       options.inSampleSize = 6;
-                   } else if (scale >= 4) {
-                       options.inSampleSize = 4;
-                   } else if (scale >= 2) {
-                       options.inSampleSize = 2;
-                   } else
-                       options.inSampleSize = 1;
-                   options.inJustDecodeBounds = false;
-
-                   bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
-                   Bitmap resizedBmp = Bitmap.createScaledBitmap(bmp, 270, 300, true);
-
-
-                   if(contacts != null)
-                       contacts.set(menuNum, contact);
-                   else
-                       System.out.println("!!!!!!!!!!!!!!! contacts is null !!!!!!!!!!!!!");
-
-                   Contact contact = new Contact(menuName, preference, resizedBmp, likeNum);
-
-                   if(contacts != null)
-                       contacts.set(menuNum, contact);
-                   else
-                       System.out.println("!!!!!!!!!!!!!!! contacts is null !!!!!!!!!!!!!");
-
-                   if(adapter != null)
-                       adapter.notifyItemChanged(menuNum);
-                   else
-                       System.out.println("!!!!!!!!!!!!!!! adapter is null !!!!!!!!!!!!!");
-               }
-           }).addOnFailureListener(new OnFailureListener() {
-               @Override
-               public void onFailure(@NonNull Exception exception) {
-                   Log.d("Noify : Image load", "getBytes Failed");
-               }
-           });
-           */
        }
 
 
-       public void extractionImageFromStorage(final String menuName, String imageURI, final String preference, final int likeNum, final Context context) {
+       public void extractionImageFromStorage(final int menuNum, final String menuName, String imageURI, final String preference, final int likeNum, final int price, final Context context) {
 
            final DisplayMetrics display = new DisplayMetrics();
            getWindowManager().getDefaultDisplay().getMetrics(display);
@@ -292,7 +229,6 @@ public class DisplayActivity extends AppCompatActivity {
                 else if(scale >= 6) {
                     options.inSampleSize = 6;
                 }
-
                 else if(scale >= 4) {
                     options.inSampleSize = 4;
                 }
@@ -306,14 +242,18 @@ public class DisplayActivity extends AppCompatActivity {
                 bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
                 Bitmap resizedBmp = Bitmap.createScaledBitmap(bmp, 270, 300, true);
 
-                if(contacts == null)
+                // 비트맵이 생성된게 먼저 contacts안에 들어갈경우 실제 contact의 포지션과 생성하려는 순서의 문제가 생기기 때문에 set메소드를 사용
+                if(contacts == null) {
                     contacts = new ArrayList<Contact>();
-                Contact contact = new Contact(menuName, preference, resizedBmp, likeNum);
-
-                contacts.add(contact);
+                    for(int i = 0; i < menuCount; i++)
+                       contacts.add(new Contact("menu", "Normal", null, 0, 0));
+                }
+                Contact contact = new Contact(menuName, preference, resizedBmp, likeNum, price);
+                contacts.set(menuNum, contact);
 
                 if(adapter == null)
                     adapter = new ContactsAdapter(context, contacts, id);
+
                 rvContacts.setAdapter(adapter);
                 StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
                 rvContacts.setLayoutManager(gridLayoutManager);
@@ -321,7 +261,6 @@ public class DisplayActivity extends AppCompatActivity {
                 RecyclerView.ItemDecoration itemDecoration = new
                         MarginItemDecoration(4);
                 rvContacts.addItemDecoration(itemDecoration);
-                    // optimizations if all item views are of the same height and width for significantly smoother scrolling:
                 rvContacts.setHasFixedSize(true);
 
             }

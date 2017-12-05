@@ -33,15 +33,14 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = getIntent();
         id = intent.getStringExtra("id");
         pass = intent.getStringExtra("pass");
-
-
-
+        System.out.println("Main id t : " +id );
+        /*
         Log.d("sdjang","before");
         AlarmHATT alarmHATT =  new AlarmHATT(getApplicationContext(),id);
         alarmHATT.Alarm();
         Toast.makeText(this, "dd", Toast.LENGTH_SHORT).show();
         Log.d("sdjang","after");
-
+        */
 
     }
 

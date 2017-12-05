@@ -30,6 +30,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
         public ImageButton imageButton;
         public TextView likeNumView;
         public TextView personalPreferenceView;
+        public TextView priceView;
         private ContactsAdapter mContacts;
 
         private Context context;
@@ -42,6 +43,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
             imageButton = (ImageButton) itemView.findViewById(R.id.image_button);
             likeNumView =  (TextView) itemView.findViewById(R.id.likeNum);
             personalPreferenceView = (TextView) itemView.findViewById(R.id.personalPreference);
+            priceView = (TextView) itemView.findViewById(R.id.price);
 
             this.context = context;
             this.mContacts = contacts;
@@ -85,20 +87,24 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
         Contact contact = mContacts.get(position);
 
         final TextView menuNameView  = viewHolder.menuNameView;
-        ImageButton imageButton = viewHolder.imageButton;
+        final ImageButton imageButton = viewHolder.imageButton;
         TextView likeNumView  = viewHolder.likeNumView;
         TextView personalPreferenceView = viewHolder.personalPreferenceView;
+        TextView priceView = viewHolder.priceView;
 
         final String MenuPosition = "" + position;
         final String MenuName = contact.getMenuName();
         final Bitmap MenuImageBitMap = contact.getImageBitmap();
         final String LikeNum = "" + contact.getLikeNum();
         final String Preference = contact.getPersonalPreference();
+        final String price = "" + contact.getPrice();
 
         menuNameView.setText(MenuName);
-        imageButton.setImageBitmap(MenuImageBitMap);
+        if(MenuImageBitMap != null)
+             imageButton.setImageBitmap(MenuImageBitMap);
         likeNumView.setText(LikeNum);
         personalPreferenceView.setText(Preference);
+        priceView.setText(price);
 
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,8 +116,8 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
                 intent.putExtra("MenuImageBitMap", MenuImageBitMap);
                 intent.putExtra("LikeNum", LikeNum);
                 intent.putExtra("Preference", Preference);
+                intent.putExtra("Price", price);
                 intent.putExtra("Id", id);
-                System.out.println("Null Check " + MenuName + " , " + LikeNum + " , " + Preference + " , ");
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 mContext.startActivity(intent);
             }

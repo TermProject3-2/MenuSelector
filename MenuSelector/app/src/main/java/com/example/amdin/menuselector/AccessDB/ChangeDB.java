@@ -31,7 +31,7 @@ public class ChangeDB {
                 @Override
                 public Transaction.Result doTransaction(MutableData mutableData) {
                     int LikeNum = Integer.parseInt(mutableData.getValue(String.class));
-                    LikeNum++;
+                       LikeNum++;
                     mutableData.setValue(""+LikeNum);
                     System.out.println("+ LikeNum test ! : " + LikeNum);
                     return Transaction.success(mutableData);
@@ -47,7 +47,8 @@ public class ChangeDB {
                 @Override
                 public Transaction.Result doTransaction(MutableData mutableData) {
                     int LikeNum = Integer.parseInt(mutableData.getValue(String.class));
-                    LikeNum--;
+                    if(LikeNum > 0)
+                        LikeNum--;
                     mutableData.setValue(""+LikeNum);
                     System.out.println("- LikeNum test ! : " + LikeNum);
                     return Transaction.success(mutableData);
