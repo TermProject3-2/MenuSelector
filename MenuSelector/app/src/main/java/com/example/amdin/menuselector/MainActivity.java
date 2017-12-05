@@ -34,8 +34,7 @@ public class MainActivity extends AppCompatActivity {
         id = intent.getStringExtra("id");
         pass = intent.getStringExtra("pass");
 
-        StringTokenizer st = new StringTokenizer(id,".");
-        id = st.nextToken();
+
 
         Log.d("sdjang","before");
         AlarmHATT alarmHATT =  new AlarmHATT(getApplicationContext(),id);

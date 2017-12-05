@@ -73,18 +73,16 @@ public class DisplayActivity extends AppCompatActivity {
  myRef.child("UserList").child(id).child("preference").child("1").setValue("1");
         myRef.child("UserList").child(id).child("preference").child("3").setValue("3");
         myRef.child("UserList").child(id).child("preference").child("5").setValue("5");
-
-        for(int i = 0; i < 20; i++) {
-            String key = myRef.child("menu" + i).getKey();
-            HashMap<String, Object> postValues = new HashMap<>();
-            postValues.put("MenuNumber", ""+i );
-            postValues.put("MenuName", "menu"+i);
-            postValues.put("ImageURI", "gs://today-menu-selector.appspot.com/menu2.bmp");
-            postValues.put("LikeNum", "0");
-            postValues.put("Preference", "Nomal");
-            myRef.child(key).setValue(postValues);
-        }
 */
+        for(int i = 0; i < 10; i++) {
+            HashMap<String, Object> posts = new HashMap<>();
+            posts.put("MenuNumber", ""+i );
+            posts.put("MenuName", "menu"+i);
+            posts.put("ImageURI", "gs://today-menu-selector.appspot.com/menu2.bmp");
+            posts.put("LikeNum", "0");
+            myRef.child("menu"+i).setValue(posts);
+        }
+
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -124,16 +122,18 @@ public class DisplayActivity extends AppCompatActivity {
                 menuCount = Integer.parseInt(dataSnapshot.child("MenuCount").getValue().toString());
 
                 for(int i = 0; i <  menuCount; i++) {
-                    int menuNum = Integer.parseInt(dataSnapshot.child("menu"+i).child("MenuNumber").getValue().toString());
-                    String menuName = dataSnapshot.child("menu"+i).child("MenuName").getValue().toString();
-                    String imageURI = dataSnapshot.child("menu"+i).child("ImageURI").getValue().toString();
-                    int likeNum = Integer.parseInt(dataSnapshot.child("menu"+i).child("LikeNum").getValue().toString());
+                    if(dataSnapshot.child("menu"+i).exists()) { //메뉴 키가 존재할때만 데이터생성
+                        int menuNum = Integer.parseInt(dataSnapshot.child("menu" + i).child("MenuNumber").getValue().toString());
+                        String menuName = dataSnapshot.child("menu" + i).child("MenuName").getValue().toString();
+                        String imageURI = dataSnapshot.child("menu" + i).child("ImageURI").getValue().toString();
+                        int likeNum = Integer.parseInt(dataSnapshot.child("menu" + i).child("LikeNum").getValue().toString());
 
-                    if(preference[i] != null)
-                        extractionImageFromStorage(menuName, imageURI,"Like", likeNum, getApplicationContext());
-                    else
-                        extractionImageFromStorage(menuName, imageURI,"Normal", likeNum, getApplicationContext());
-                    Log.d("Data Change for oneTime", "Success to read value.");
+                        if (preference[i] != null)
+                            extractionImageFromStorage(menuName, imageURI, "Like", likeNum, getApplicationContext());
+                        else
+                            extractionImageFromStorage(menuName, imageURI, "Normal", likeNum, getApplicationContext());
+                        Log.d("Data Change for oneTime", "Success to read value.");
+                    }
                 }
             }
             @Override
@@ -150,29 +150,30 @@ public class DisplayActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 for(int i = 0; i <  menuCount; i++) {
-                    myRef.child("menu"+i).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            String menuName = dataSnapshot.child("MenuName").getValue().toString();
-                            String imageURI = dataSnapshot.child("ImageURI").getValue().toString();
-                            int likeNum = Integer.parseInt(dataSnapshot.child("LikeNum").getValue().toString());
-                            int menuNum = Integer.parseInt(dataSnapshot.child("MenuNumber").getValue().toString());
+                    if(dataSnapshot.child("menu"+i).exists()) { //메뉴 키가 존재할때만 데이터 변화 적용
+                        myRef.child("menu" + i).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                String menuName = dataSnapshot.child("MenuName").getValue().toString();
+                                String imageURI = dataSnapshot.child("ImageURI").getValue().toString();
+                                int likeNum = Integer.parseInt(dataSnapshot.child("LikeNum").getValue().toString());
+                                int menuNum = Integer.parseInt(dataSnapshot.child("MenuNumber").getValue().toString());
 
-                            if(preference[menuNum] != null)
-                                notifyToAdapter(menuNum, menuName,imageURI, "Like", likeNum);
-                            else
-                                notifyToAdapter(menuNum, menuName,imageURI, "Normal", likeNum);
-                            // HashMap<String, Object> preference = (HashMap<String, Object>)preferenceMap.get("menu"+menuNum);
-                            //notifyToAdapter(menuNum, menuName,imageURI, preference.get("preference").toString(), likeNum);
-                            Log.d("Data Chane Every Time:", "Success to read value.");
-                        }
+                                if (preference[menuNum] != null)
+                                    notifyToAdapter(menuNum, menuName, imageURI, "Like", likeNum);
+                                else
+                                    notifyToAdapter(menuNum, menuName, imageURI, "Normal", likeNum);
+                                // HashMap<String, Object> preference = (HashMap<String, Object>)preferenceMap.get("menu"+menuNum);
+                                //notifyToAdapter(menuNum, menuName,imageURI, preference.get("preference").toString(), likeNum);
+                                Log.d("Data Chane Every Time:", "Success to read value.");
+                            }
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                            Log.d("Data Chane:", "Failed to read value.");
-                        }
-                    });
-
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                Log.d("Data Chane:", "Failed to read value.");
+                            }
+                        });
+                    }
                 }
 
             }

@@ -15,7 +15,6 @@
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -31,7 +30,8 @@
         <activity
             android:name=".SettingActivity"
             android:parentActivityName=".MainActivity" />
-        <activity android:name=".SingUpActivity" />
+        <activity android:name=".SingUpActivity"
+            android:parentActivityName=".LoginActivity"/>
 
         <receiver android:name=".myAlarm.BroadcastD" />
 
