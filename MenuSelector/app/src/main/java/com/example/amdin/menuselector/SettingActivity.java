@@ -32,7 +32,7 @@ public class SettingActivity extends AppCompatActivity {
     private LinearLayout onoffLayout,timePickerLayout,messageOnoffLayout,alarmMessageSetLayout;
     private EditText editMesageView;
     private TextView alarmMessage;
-    private String id, pass;
+    private String id;
 
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference myRef;
@@ -61,7 +61,6 @@ public class SettingActivity extends AppCompatActivity {
         alarmMessageSetLayout.setVisibility(View.GONE);
 
         id = getIntent().getStringExtra("id");
-        pass = getIntent().getStringExtra("pass");
         st = new StringTokenizer(id,".");
         id = st.nextToken();
 
