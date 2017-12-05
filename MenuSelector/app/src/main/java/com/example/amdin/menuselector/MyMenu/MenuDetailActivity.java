@@ -29,7 +29,7 @@ public class MenuDetailActivity extends AppCompatActivity {
     private TextView likeNumView;
     private ImageView menuImageView;
     private ImageButton preferenceButton;
-    private Button recommandButton;
+    private TextView priceView;
 
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference myRef;
@@ -41,6 +41,7 @@ public class MenuDetailActivity extends AppCompatActivity {
     private Bitmap menuImageBitMap;
     private String likeNum;
     private String preference;
+    private String price;
     private String id;
 
     @Override
@@ -57,7 +58,7 @@ public class MenuDetailActivity extends AppCompatActivity {
         likeNumView = (TextView)findViewById(R.id.likeNumInDeatail);
         menuImageView = (ImageView)findViewById(R.id.menuImageInDetail);
         preferenceButton = (ImageButton)findViewById(R.id.preferenceButton);
-        recommandButton = (Button) findViewById(R.id.recommandButton);
+        priceView = (TextView)findViewById(R.id.priceInDetail);
 
         Intent intent = getIntent();
 
@@ -66,11 +67,13 @@ public class MenuDetailActivity extends AppCompatActivity {
         menuImageBitMap = (Bitmap)intent.getParcelableExtra("MenuImageBitMap");
         likeNum = intent.getExtras().getString("LikeNum");
         preference = intent.getExtras().getString("Preference");
+        price = intent.getExtras().getString("Price");
         id = intent.getExtras().getString("Id");
 
         menuNameView.setText(menuName);
         menuImageView.setImageBitmap(menuImageBitMap);
         likeNumView.setText(likeNum);
+        priceView.setText(price);
 
         if(preference.equals("Like"))
             preferenceButton.setImageResource(R.drawable.active_like_butoon);
@@ -81,7 +84,6 @@ public class MenuDetailActivity extends AppCompatActivity {
         preferenceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(MenuDetailActivity.this, preference, Toast.LENGTH_SHORT).show();
                 if(preference.equals("Normal")) {
                     new ChangeDB().changeDataForDB(myRef, menuPosition, "x", "x", "+", "Like", id);
                     preference = "Like"; //preference 객체는 전달받은 복사값일 뿐 실제 DB의 preference의 레퍼런스가 아니다.
@@ -110,21 +112,8 @@ public class MenuDetailActivity extends AppCompatActivity {
                         Log.d("likeNum in Detail", "result : cancled");
                     }
                 });
-
-
-
             }
         });
-
-        recommandButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //if(recommandOnOf)
-                   // new ChangeDB().changeDataForDB(myRef, menuPosition, "x", "x", "x", "Like");
-
-            }
-        });
-
 
 
     }

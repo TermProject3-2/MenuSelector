@@ -14,13 +14,14 @@ public class Contact {
     private String personalPreference;
     private Bitmap ImageBitmap;
     private int likeNum;
+    private int price;
 
-    public Contact(String mName, String personalPreference, Bitmap ImageBitmap, int likeNum) {
+    public Contact(String mName, String personalPreference, Bitmap ImageBitmap, int likeNum, int price) {
         this.menuName = mName;
         this.personalPreference = personalPreference;
         this.ImageBitmap = ImageBitmap;
         this.likeNum = likeNum;
-
+        this.price =price;
     }
 
 
@@ -56,5 +57,11 @@ public class Contact {
         this.likeNum = likeNum;
     }
 
+    public int getPrice() {
+        return price;
+    }
 
+    public void setPrice(int price) {
+        this.price = price;
+    }
 }
