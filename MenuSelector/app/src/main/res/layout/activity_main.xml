@@ -7,7 +7,7 @@
     tools:context="com.example.amdin.menuselector.MainActivity">
 
     <ImageButton
-        android:id="@+id/selectbtn"
+        android:id="@+id/displaybtn"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_alignParentStart="true"
@@ -21,9 +21,9 @@
         android:id="@+id/selectbtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/selectbtn"
+        android:layout_alignBottom="@+id/displaybtn"
         android:layout_marginStart="91dp"
-        android:layout_toEndOf="@+id/selectbtn"
+        android:layout_toEndOf="@+id/displaybtn"
         android:onClick="onButtonSelect"
         app:srcCompat="@android:drawable/btn_star_big_on" />
 
@@ -31,7 +31,7 @@
         android:id="@+id/foodsettingbtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/selectbtn"
+        android:layout_below="@+id/displaybtn"
         android:layout_marginTop="85dp"
         android:layout_toStartOf="@+id/selectbtn"
         android:onClick="onButtonFoodSetting"

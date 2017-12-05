@@ -4,14 +4,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -22,26 +23,25 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.Vector;
 
 public class SelectActivity extends AppCompatActivity {
     private FirebaseDatabase firebaseDatabase;
-    private DatabaseReference myRef,myLikeRef;
+    private DatabaseReference myRef;
     private FirebaseStorage mFirebaseStorage;
-    private Image mImg;
+    private ImageView mImg;
     private String id;
-    private Bitmap bmp;
-    private TextView textPrice , textFoodName;
-    private String foodPrice, foodName, foodImgUri,preference;
+    private Bitmap bmp,resizedBmp;
+    private TextView textPrice , textFoodName, textFoodLikeNum;
+    private String foodPrice, foodName, foodImgUri,preference ;
     private Button selectbtn;
     private int foodLikeNum;
 
     private boolean selectFlag = true;
-    private Vector<Integer> likeMenuNum;
-    private HashMap<String,Integer> likeMenuHash;
+    private Vector<String> likeMenuNum;
 
 
     @Override
@@ -49,20 +49,19 @@ public class SelectActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select);
 
-        textFoodName = (TextView)findViewById(R.id.textFoodName);
-        textPrice = (TextView)findViewById(R.id.textPrice);
-        selectbtn = (Button)findViewById(R.id.selectbtn);
+        textFoodName = (TextView)findViewById(R.id.select_foodName);
+        textPrice = (TextView)findViewById(R.id.select_price);
+        textFoodLikeNum = (TextView)findViewById(R.id.select_likenum);
+        selectbtn = (Button)findViewById(R.id.select_selectbtn);
+        mImg = (ImageView) findViewById(R.id.select_image);
 
-
-        likeMenuHash = new HashMap<>();
 
         Intent intent = getIntent();
         id = intent.getStringExtra("id");
         firebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseStorage = FirebaseStorage.getInstance();
         myRef = firebaseDatabase.getReference("MenuList");
-        myLikeRef = firebaseDatabase.getReference("MenuList").child("UserList");
-
+        Toast.makeText(SelectActivity.this, id, Toast.LENGTH_SHORT).show();
 
 
     }
@@ -102,6 +101,7 @@ public class SelectActivity extends AppCompatActivity {
 
                 bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
                 Bitmap resizedBmp = Bitmap.createScaledBitmap(bmp, 270, 300, true);
+                mImg.setImageBitmap(resizedBmp);
             }
         });
     }
@@ -110,42 +110,44 @@ public class SelectActivity extends AppCompatActivity {
 
 
     public void onSelectClick(View v){
-
-        myLikeRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                likeMenuNum = new Vector<>();
-                likeMenuHash = (HashMap<String,Integer>)dataSnapshot.child(id).child("preference").getValue();
-                Set keySet = likeMenuHash.keySet();
-                Iterator<?> it = likeMenuHash.keySet().iterator();
-                while(it.hasNext())
-                    likeMenuNum.add(likeMenuHash.get(it.next()));
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-
+        Log.d("sdjang","button click!");
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                int rannum = likeMenuNum.get(((int)Math.random()*likeMenuNum.size()));
-                foodName = dataSnapshot.child("menu"+rannum).child("MenuName").getValue().toString();
-                foodPrice = dataSnapshot.child("menu"+rannum).child("MenuPrice").getValue().toString();
-                foodImgUri = dataSnapshot.child("menu"+rannum).child("ImageURI").getValue().toString();
-                foodLikeNum = Integer.parseInt(dataSnapshot.child("menu"+rannum).child("LikeNum").getValue().toString());
+                Log.d("sdjang","get Key get Key");
+                int menuCount = Integer.parseInt(dataSnapshot.child("MenuCount").getValue().toString());
+                likeMenuNum = new Vector<>();
+                for(int i=0; i<menuCount; i++){
+                    if(dataSnapshot.child("UserList").child(id).child("preference").child(""+i).exists())
+                        likeMenuNum.add("menu"+i);
+                }
+                String rannum = likeMenuNum.get((int)(Math.random()*likeMenuNum.size()));
+                foodName = dataSnapshot.child(rannum).child("MenuName").getValue().toString();
+                foodPrice = dataSnapshot.child(rannum).child("Price").getValue().toString();
+                foodImgUri = dataSnapshot.child(rannum).child("ImageURI").getValue().toString();
+                foodLikeNum = Integer.parseInt(dataSnapshot.child(rannum).child("LikeNum").getValue().toString());
                 extractionImageFromStorage(foodName, foodImgUri,"Like",foodLikeNum,getApplicationContext());
+
+                textFoodName.setText(foodName);
+                textPrice.setText(foodPrice);
+                textFoodLikeNum.setText(foodLikeNum+"");
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
             }
         });
-        textFoodName.setText(foodName);
-        textPrice.setText(foodPrice);
+
+        /*
+        try {
+            Thread.sleep(2000);
+        }catch(InterruptedException e){
+
+        }
+        */
+        //textPrice.setText(foodPrice);
+
         if(selectFlag) {
             selectbtn.setText("reselect");
             selectFlag = false;

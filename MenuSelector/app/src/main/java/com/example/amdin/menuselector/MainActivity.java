@@ -57,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
     //학식 뽑기 버튼
     public void onButtonSelect(View v){
         Intent intent = new Intent(getApplicationContext(),SelectActivity.class);
+        intent.putExtra("id", id);
+        intent.putExtra("pass", pass);
         startActivity(intent);
     }
 
