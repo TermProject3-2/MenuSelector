@@ -20,6 +20,9 @@ import java.util.List;
 
 public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHolder> {
 
+    private String id;
+    private List<Contact> mContacts;
+    private Context mContext;
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
@@ -55,21 +58,16 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
         }
     }
 
-
-    private List<Contact> mContacts;
-    private Context mContext;
-
-
-    public ContactsAdapter(Context context, List<Contact> contacts) {
+    public ContactsAdapter(Context context, List<Contact> contacts, String id) {
         mContacts = contacts;
         mContext = context;
+        this.id = id;
     }
 
 
     private Context getContext() {
         return mContext;
     }
-
 
     @Override
     public ContactsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -106,14 +104,16 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
             @Override
             public void onClick(View view) {
                 System.out.println("MenuPosition : " + MenuPosition);
-                Intent intent = new Intent(getContext(), MenuDetailActivity.class);
+                Intent intent = new Intent(mContext, MenuDetailActivity.class);
                 intent.putExtra("MenuPosition", MenuPosition);
                 intent.putExtra("MenuName", MenuName);
                 intent.putExtra("MenuImageBitMap", MenuImageBitMap);
                 intent.putExtra("LikeNum", LikeNum);
                 intent.putExtra("Preference", Preference);
+                intent.putExtra("Id", id);
                 System.out.println("Null Check " + MenuName + " , " + LikeNum + " , " + Preference + " , ");
-                getContext().startActivity(intent);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                mContext.startActivity(intent);
             }
         });
 

@@ -6,16 +6,21 @@ import android.graphics.Bitmap;
 import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.amdin.menuselector.AccessDB.ChangeDB;
 import com.example.amdin.menuselector.R;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
 //manifest에서 팝업형식의 액티비티로 테마 지정
@@ -36,6 +41,7 @@ public class MenuDetailActivity extends AppCompatActivity {
     private Bitmap menuImageBitMap;
     private String likeNum;
     private String preference;
+    private String id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +66,7 @@ public class MenuDetailActivity extends AppCompatActivity {
         menuImageBitMap = (Bitmap)intent.getParcelableExtra("MenuImageBitMap");
         likeNum = intent.getExtras().getString("LikeNum");
         preference = intent.getExtras().getString("Preference");
+        id = intent.getExtras().getString("Id");
 
         menuNameView.setText(menuName);
         menuImageView.setImageBitmap(menuImageBitMap);
@@ -74,27 +81,46 @@ public class MenuDetailActivity extends AppCompatActivity {
         preferenceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                if(preference.equals("Nomal")) {
-                    new ChangeDB().changeDataForDB(myRef, menuPosition, "x", "x", "x", "Like");
+                Toast.makeText(MenuDetailActivity.this, preference, Toast.LENGTH_SHORT).show();
+                if(preference.equals("Normal")) {
+                    new ChangeDB().changeDataForDB(myRef, menuPosition, "x", "x", "+", "Like", id);
                     preference = "Like"; //preference 객체는 전달받은 복사값일 뿐 실제 DB의 preference의 레퍼런스가 아니다.
                 }
                 else {
-                    new ChangeDB().changeDataForDB(myRef, menuPosition, "x", "x", "x", "Nomal");
-                    preference = "Nomal";
+                    System.out.println("resultFFF : " + preference);
+                    new ChangeDB().changeDataForDB(myRef, menuPosition, "x", "x", "-", "Normal", id);
+                    preference = "Normal";
                 }
-                if(preference.equals("Like"))
+
+                if(preference.equals("Like")) {
                     preferenceButton.setImageResource(R.drawable.active_like_butoon);
-                else
+                }
+                else {
                     preferenceButton.setImageResource(R.drawable.nomal_like_button);
+                }
+
+                myRef.child("menu"+menuPosition).child("LikeNum").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        likeNum = dataSnapshot.getValue().toString();
+                        likeNumView.setText(likeNum);
+                    }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.d("likeNum in Detail", "result : cancled");
+                    }
+                });
+
+
+
             }
         });
 
         recommandButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(recommandOnOf)
-                    new ChangeDB().changeDataForDB(myRef, menuPosition, "x", "x", "x", "Like");
+                //if(recommandOnOf)
+                   // new ChangeDB().changeDataForDB(myRef, menuPosition, "x", "x", "x", "Like");
 
             }
         });

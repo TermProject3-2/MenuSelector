@@ -19,20 +19,28 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
 
 import java.util.Calendar;
+import java.util.StringTokenizer;
 
 public class LoginActivity extends AppCompatActivity {
     TextView textId;
     TextView textPass;
     EditText editId;
     EditText editPass;
+    String email;
+    String password;
+
     private FirebaseAuth.AuthStateListener authStateListener;
     private FirebaseAuth mAuth;
+
 
 
     @Override
@@ -80,8 +88,8 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onButtonLogin(View v){
         // 로그인 메소드 만들고 if문 추가할것!!!!!!
-        final String email = ((EditText)findViewById(R.id.editId)).getText().toString();
-        final String password = ((EditText)findViewById(R.id.editPass)).getText().toString();
+        email = ((EditText)findViewById(R.id.editId)).getText().toString();
+        password = ((EditText)findViewById(R.id.editPass)).getText().toString();
         mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -90,10 +98,14 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this,"로그인 실패",Toast.LENGTH_SHORT).show();
                 }
                 else if(task.isSuccessful()){
+
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    StringTokenizer st = new StringTokenizer(email,".");
+                    email= st.nextToken();
                     intent.putExtra("id",email);
                     intent.putExtra("pass", password);
                     startActivity(intent);
+
                 }
             }
         });
