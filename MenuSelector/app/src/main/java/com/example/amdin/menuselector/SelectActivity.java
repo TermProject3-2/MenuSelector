@@ -34,9 +34,9 @@ public class SelectActivity extends AppCompatActivity {
     private FirebaseStorage mFirebaseStorage;
     private ImageView mImg;
     private String id;
-    private Bitmap bmp,resizedBmp;
+    private Bitmap bmp;
     private TextView textPrice , textFoodName, textFoodLikeNum;
-    private String foodPrice, foodName, foodImgUri,preference ;
+    private String foodPrice, foodName, foodImgUri, preName ;
     private Button selectbtn;
     private int foodLikeNum;
 
@@ -121,16 +121,30 @@ public class SelectActivity extends AppCompatActivity {
                     if(dataSnapshot.child("UserList").child(id).child("preference").child(""+i).exists())
                         likeMenuNum.add("menu"+i);
                 }
-                String rannum = likeMenuNum.get((int)(Math.random()*likeMenuNum.size()));
+                String rannum;
+                while(true) {
+                    rannum = likeMenuNum.get((int) (Math.random() * likeMenuNum.size()));
+                    if(!selectFlag && !rannum.equals(preName)) {
+                        break;
+                    }
+                }
                 foodName = dataSnapshot.child(rannum).child("MenuName").getValue().toString();
                 foodPrice = dataSnapshot.child(rannum).child("Price").getValue().toString();
                 foodImgUri = dataSnapshot.child(rannum).child("ImageURI").getValue().toString();
                 foodLikeNum = Integer.parseInt(dataSnapshot.child(rannum).child("LikeNum").getValue().toString());
                 extractionImageFromStorage(foodName, foodImgUri,"Like",foodLikeNum,getApplicationContext());
 
+
+                try {
+                    Thread.sleep(1300);
+                }catch(InterruptedException e){
+
+                }
                 textFoodName.setText(foodName);
                 textPrice.setText(foodPrice);
                 textFoodLikeNum.setText(foodLikeNum+"");
+                preName = new String();
+                preName = foodName.trim();
             }
 
             @Override
@@ -138,15 +152,6 @@ public class SelectActivity extends AppCompatActivity {
 
             }
         });
-
-        /*
-        try {
-            Thread.sleep(2000);
-        }catch(InterruptedException e){
-
-        }
-        */
-        //textPrice.setText(foodPrice);
 
         if(selectFlag) {
             selectbtn.setText("reselect");
