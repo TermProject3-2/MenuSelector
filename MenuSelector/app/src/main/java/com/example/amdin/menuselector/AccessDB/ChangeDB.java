@@ -32,7 +32,7 @@ public class ChangeDB {
                 public Transaction.Result doTransaction(MutableData mutableData) {
                     int LikeNum = Integer.parseInt(mutableData.getValue(String.class));
                     LikeNum++;
-                    mutableData.setValue(LikeNum);
+                    mutableData.setValue(""+LikeNum);
                     System.out.println("+ LikeNum test ! : " + LikeNum);
                     return Transaction.success(mutableData);
                 }
@@ -48,7 +48,7 @@ public class ChangeDB {
                 public Transaction.Result doTransaction(MutableData mutableData) {
                     int LikeNum = Integer.parseInt(mutableData.getValue(String.class));
                     LikeNum--;
-                    mutableData.setValue(LikeNum);
+                    mutableData.setValue(""+LikeNum);
                     System.out.println("- LikeNum test ! : " + LikeNum);
                     return Transaction.success(mutableData);
                 }

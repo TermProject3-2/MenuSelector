@@ -151,7 +151,7 @@ public class DisplayActivity extends AppCompatActivity {
 
                 for(int i = 0; i <  menuCount; i++) {
                     if(dataSnapshot.child("menu"+i).exists()) { //메뉴 키가 존재할때만 데이터 변화 적용
-                        myRef.child("menu" + i).addListenerForSingleValueEvent(new ValueEventListener() {
+                        myRef.child("menu" + i).addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 String menuName = dataSnapshot.child("MenuName").getValue().toString();
@@ -290,7 +290,6 @@ public class DisplayActivity extends AppCompatActivity {
 
                 if(adapter == null)
                     adapter = new ContactsAdapter(context, contacts, id);
-
                 rvContacts.setAdapter(adapter);
                 StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
                 rvContacts.setLayoutManager(gridLayoutManager);
