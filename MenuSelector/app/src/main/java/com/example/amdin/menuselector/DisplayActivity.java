@@ -74,6 +74,7 @@ public class DisplayActivity extends AppCompatActivity {
         myRef.child("UserList").child(id).child("preference").child("3").setValue("3");
         myRef.child("UserList").child(id).child("preference").child("5").setValue("5");
 */
+/*
         for(int i = 0; i < 10; i++) {
             HashMap<String, Object> posts = new HashMap<>();
             posts.put("MenuNumber", ""+i );
@@ -82,7 +83,7 @@ public class DisplayActivity extends AppCompatActivity {
             posts.put("LikeNum", "0");
             myRef.child("menu"+i).setValue(posts);
         }
-
+*/
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -151,7 +152,7 @@ public class DisplayActivity extends AppCompatActivity {
 
                 for(int i = 0; i <  menuCount; i++) {
                     if(dataSnapshot.child("menu"+i).exists()) { //메뉴 키가 존재할때만 데이터 변화 적용
-                        myRef.child("menu" + i).addValueEventListener(new ValueEventListener() {
+                        myRef.child("menu" + i).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 String menuName = dataSnapshot.child("MenuName").getValue().toString();
@@ -187,12 +188,27 @@ public class DisplayActivity extends AppCompatActivity {
 
 
        public  void notifyToAdapter(final int menuNum, final String menuName, String imageURI, final String preference, final int likeNum){
+         if(contacts != null && contacts.size() >= menuNum) {
+             Contact contact = contacts.get(menuNum);
+             contact.setLikeNum(likeNum);
+             contact.setMenuName(menuName);
+             contact.setPersonalPreference(preference);
+             contacts.set(menuNum, contact);
+             if(adapter != null)
+                 adapter.notifyItemChanged(menuNum);
+             else
+                 System.out.println("!!!!!!!!!!!!!!! adapter is null !!!!!!!!!!!!!");
+         }
+
+
+           /*
            final DisplayMetrics display = new DisplayMetrics();
            getWindowManager().getDefaultDisplay().getMetrics(display);
 
            StorageReference storageRef = mFirebaseStorage.getReferenceFromUrl
                    (imageURI);
-
+            */
+           /*
            storageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                @Override
                public void onSuccess(byte[] bytes) {
@@ -221,12 +237,19 @@ public class DisplayActivity extends AppCompatActivity {
                    bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
                    Bitmap resizedBmp = Bitmap.createScaledBitmap(bmp, 270, 300, true);
 
+
+                   if(contacts != null)
+                       contacts.set(menuNum, contact);
+                   else
+                       System.out.println("!!!!!!!!!!!!!!! contacts is null !!!!!!!!!!!!!");
+
                    Contact contact = new Contact(menuName, preference, resizedBmp, likeNum);
 
                    if(contacts != null)
                        contacts.set(menuNum, contact);
                    else
                        System.out.println("!!!!!!!!!!!!!!! contacts is null !!!!!!!!!!!!!");
+
                    if(adapter != null)
                        adapter.notifyItemChanged(menuNum);
                    else
@@ -238,6 +261,7 @@ public class DisplayActivity extends AppCompatActivity {
                    Log.d("Noify : Image load", "getBytes Failed");
                }
            });
+           */
        }
 
 
