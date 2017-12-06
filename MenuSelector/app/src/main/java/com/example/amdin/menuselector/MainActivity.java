@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.example.amdin.menuselector.myAlarm.BroadcastD;
 import com.google.firebase.database.DataSnapshot;
@@ -33,9 +32,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = getIntent();
         id = intent.getStringExtra("id");
         pass = intent.getStringExtra("pass");
-        System.out.println("Main id t : " +id );
 
-        Log.d("sdjang","MainActivity.onCreate");
         AlarmHATT alarmHATT =  new AlarmHATT(getApplicationContext(),id);
         alarmHATT.Alarm();
     }
@@ -45,15 +42,13 @@ public class MainActivity extends AppCompatActivity {
 
         Intent intent = new Intent(getApplicationContext(),DisplayActivity.class);
         intent.putExtra("id", id);
-        intent.putExtra("pass", pass);
-                startActivity(intent);
+        startActivity(intent);
     }
 
     //학식 뽑기 버튼
     public void onButtonSelect(View v){
         Intent intent = new Intent(getApplicationContext(),SelectActivity.class);
         intent.putExtra("id", id);
-        intent.putExtra("pass", pass);
         startActivity(intent);
     }
 
@@ -68,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
     public void onButtonSetting(View v) {
         Intent intent = new Intent(getApplicationContext(),SettingActivity.class);
         intent.putExtra("id", id);
-        intent.putExtra("pass", pass);
         startActivity(intent);
     }
 
@@ -88,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
             st = new StringTokenizer(id,".");
             this.context = context;
             tid = st.nextToken();
+            /*
             myRef.addListenerForSingleValueEvent(new ValueEventListener(){
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -109,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
 
                 }
             });
+            */
         }
 
 
@@ -122,21 +118,26 @@ public class MainActivity extends AppCompatActivity {
 
             }
                 am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                Intent intentalarm = new Intent("com.example.amdin.menuselector.ALARM_START");
+                Intent intentalarm = new Intent(context,BroadcastD.class);
+                intentalarm.putExtra("id",id);
                 //id를 만들어서 넣어주쟈
-                PendingIntent sender = PendingIntent.getBroadcast(MainActivity.this, 0, intentalarm, PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent sender = PendingIntent.getBroadcast(context, 0, intentalarm, PendingIntent.FLAG_UPDATE_CURRENT);
                 Calendar calendar = Calendar.getInstance();
                 //알람시간 calendar에 set해주기
 
-                calendar.set( 11, 45, 0);
+                calendar.set(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DAY_OF_MONTH),
+                        17,20,0);
                 //calendar.set(alarmhours, alarmmin, 0);
-
-                //Toast.makeText(getApplicationContext(), "alarmsetting hours = "+ alarmhours + "min = " +alarmmin, Toast.LENGTH_LONG).show();
                 //알람 예약
-                am.cancel(sender);
-                Log.d("sdjang","Alarm set");
+                Log.d("sdjang",""+calendar.getTimeInMillis());
+                Log.d("sdjang","Year = "+calendar.get(Calendar.YEAR));
+                Log.d("sdjang","Month = "+ calendar.get(Calendar.MONTH));
+                Log.d("sdjang","Day = "+ calendar.get(Calendar.DAY_OF_MONTH));
+                Log.d("sdjang","hour = "+ calendar.get(Calendar.HOUR_OF_DAY));
+                Log.d("sdjang","min = "+ calendar.get(Calendar.MINUTE));
+                Log.d("sdjang","second = "+ calendar.get(Calendar.SECOND));
                 am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);
-                am.cancel(sender);
+
             //}
         }
     }
