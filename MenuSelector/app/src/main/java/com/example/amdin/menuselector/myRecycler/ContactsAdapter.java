@@ -23,6 +23,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     private String id;
     private List<Contact> mContacts;
     private Context mContext;
+    private boolean buttonOn;
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
@@ -47,8 +48,6 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
 
             this.context = context;
             this.mContacts = contacts;
-
-            //messageButton.setOnClickListener(this);  클릭 리스너가 삭제인데 우리는 여기다가 이미지를 달고, 이 레이아웃에 클릭 리스너를 달거야
         }
 
         @Override
@@ -60,10 +59,11 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
         }
     }
 
-    public ContactsAdapter(Context context, List<Contact> contacts, String id) {
+    public ContactsAdapter(Context context, List<Contact> contacts, String id, boolean buttonOn) {
         mContacts = contacts;
         mContext = context;
         this.id = id;
+        this.buttonOn = buttonOn;
     }
 
 
@@ -92,7 +92,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
         TextView personalPreferenceView = viewHolder.personalPreferenceView;
         TextView priceView = viewHolder.priceView;
 
-        final String MenuPosition = "" + position;
+        final String MenuPosition = "" + contact.getMenuNum(); // position을 써버리면 메뉴번호가 아니라 순서에 의해 메뉴를 정의하기 때문에
         final String MenuName = contact.getMenuName();
         final Bitmap MenuImageBitMap = contact.getImageBitmap();
         final String LikeNum = "" + contact.getLikeNum();
@@ -106,23 +106,25 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
         personalPreferenceView.setText(Preference);
         priceView.setText(price);
 
-        imageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                System.out.println("MenuPosition : " + MenuPosition);
-                Intent intent = new Intent(mContext, MenuDetailActivity.class);
-                intent.putExtra("MenuPosition", MenuPosition);
-                intent.putExtra("MenuName", MenuName);
-                intent.putExtra("MenuImageBitMap", MenuImageBitMap);
-                intent.putExtra("LikeNum", LikeNum);
-                intent.putExtra("Preference", Preference);
-                intent.putExtra("Price", price);
-                intent.putExtra("Id", id);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                mContext.startActivity(intent);
-            }
-        });
 
+        if(buttonOn) {
+            imageButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    System.out.println("MenuPosition : " + MenuPosition);
+                    Intent intent = new Intent(mContext, MenuDetailActivity.class);
+                    intent.putExtra("MenuPosition", MenuPosition);
+                    intent.putExtra("MenuName", MenuName);
+                    intent.putExtra("MenuImageBitMap", MenuImageBitMap);
+                    intent.putExtra("LikeNum", LikeNum);
+                    intent.putExtra("Preference", Preference);
+                    intent.putExtra("Price", price);
+                    intent.putExtra("Id", id);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    mContext.startActivity(intent);
+                }
+            });
+        }
 
         //Button button = viewHolder.messageButton; 버튼 에다가 딜리트를 달아주는 작업 우리는 여기에다가 이미지를 달거야
         //button.setText("Delete");

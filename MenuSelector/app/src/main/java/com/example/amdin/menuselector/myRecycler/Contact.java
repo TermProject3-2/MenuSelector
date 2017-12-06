@@ -13,17 +13,26 @@ public class Contact {
     private String menuName;
     private String personalPreference;
     private Bitmap ImageBitmap;
+    private int menuNum;
     private int likeNum;
     private int price;
 
-    public Contact(String mName, String personalPreference, Bitmap ImageBitmap, int likeNum, int price) {
+    public Contact(String mName, String personalPreference, Bitmap ImageBitmap, int likeNum, int price, int menuNum) {
         this.menuName = mName;
+        this.menuNum = menuNum;
         this.personalPreference = personalPreference;
         this.ImageBitmap = ImageBitmap;
         this.likeNum = likeNum;
         this.price =price;
     }
 
+    public int getMenuNum() {
+        return menuNum;
+    }
+
+    public void setMenuNum(int menuNum) {
+        this.menuNum = menuNum;
+    }
 
     public String getMenuName() {
         return menuName;

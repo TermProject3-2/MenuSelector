@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -179,7 +180,6 @@ public class DisplayActivity extends AppCompatActivity {
                 Log.d("menu count", "Failed to read value.");
             }
         });
-
     }
 
     //이미지 URI의 변경으로 인한 사진변경은 즉시반영 안함. 이전 액티비티를 갔다가 다시 돌아올때 적용
@@ -242,21 +242,23 @@ public class DisplayActivity extends AppCompatActivity {
                 bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
                 Bitmap resizedBmp = Bitmap.createScaledBitmap(bmp, 270, 300, true);
 
-                // 비트맵이 생성된게 먼저 contacts안에 들어갈경우 실제 contact의 포지션과 생성하려는 순서의 문제가 생기기 때문에 set메소드를 사용
+                // 비트맵이 생성된게 먼저 contacts안에 들어갈경우 실제 contact의 포지션과 생성하려는 순서의 문제가 생기기 때문에
+                // 미리 contacts를 메뉴개수만큼 만들어놓고 set을 사용하여 실질적으로 삽입
                 if(contacts == null) {
                     contacts = new ArrayList<Contact>();
                     for(int i = 0; i < menuCount; i++)
-                       contacts.add(new Contact("menu", "Normal", null, 0, 0));
+                       contacts.add(new Contact("menu", "Normal", null, 0, 0, i));
                 }
-                Contact contact = new Contact(menuName, preference, resizedBmp, likeNum, price);
+                Contact contact = new Contact(menuName, preference, resizedBmp, likeNum, price, menuNum);
                 contacts.set(menuNum, contact);
 
                 if(adapter == null)
-                    adapter = new ContactsAdapter(context, contacts, id);
+                    adapter = new ContactsAdapter(context, contacts, id, true);
 
                 rvContacts.setAdapter(adapter);
-                StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
-                rvContacts.setLayoutManager(gridLayoutManager);
+                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
+                rvContacts.setLayoutManager(linearLayoutManager);
+
 
                 RecyclerView.ItemDecoration itemDecoration = new
                         MarginItemDecoration(4);
