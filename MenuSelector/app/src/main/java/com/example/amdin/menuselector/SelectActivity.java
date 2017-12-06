@@ -10,6 +10,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,6 +40,7 @@ public class SelectActivity extends AppCompatActivity {
     private String foodPrice, foodName, foodImgUri, preName ;
     private Button selectbtn;
     private int foodLikeNum;
+    private CheckBox checkLike;
 
     private boolean selectFlag = true;
     private Vector<String> likeMenuNum;
@@ -54,7 +56,7 @@ public class SelectActivity extends AppCompatActivity {
         textFoodLikeNum = (TextView)findViewById(R.id.select_likenum);
         selectbtn = (Button)findViewById(R.id.select_selectbtn);
         mImg = (ImageView) findViewById(R.id.select_image);
-
+        checkLike = (CheckBox)findViewById(R.id.select_likecheck);
 
         Intent intent = getIntent();
         id = intent.getStringExtra("id");
@@ -117,10 +119,18 @@ public class SelectActivity extends AppCompatActivity {
                 Log.d("sdjang","get Key get Key");
                 int menuCount = Integer.parseInt(dataSnapshot.child("MenuCount").getValue().toString());
                 likeMenuNum = new Vector<>();
-                for(int i=0; i<menuCount; i++){
-                    if(dataSnapshot.child("UserList").child(id).child("preference").child(""+i).exists())
-                        likeMenuNum.add("menu"+i);
+                if(checkLike.isChecked()) {
+                    for (int i = 0; i < menuCount; i++) {
+                        if (dataSnapshot.child("UserList").child(id).child("preference").child("" + i).exists())
+                            likeMenuNum.add("menu" + i);
+                    }
                 }
+                else if(!checkLike.isChecked()){
+                    for (int i = 0; i < menuCount; i++) {
+                            likeMenuNum.add("menu" + i);
+                    }
+                }
+
                 String rannum;
                 while(true) {
                     rannum = likeMenuNum.get((int) (Math.random() * likeMenuNum.size()));

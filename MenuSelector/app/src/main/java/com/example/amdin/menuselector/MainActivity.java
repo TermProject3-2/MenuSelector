@@ -34,14 +34,10 @@ public class MainActivity extends AppCompatActivity {
         id = intent.getStringExtra("id");
         pass = intent.getStringExtra("pass");
         System.out.println("Main id t : " +id );
-        /*
-        Log.d("sdjang","before");
+
+        Log.d("sdjang","MainActivity.onCreate");
         AlarmHATT alarmHATT =  new AlarmHATT(getApplicationContext(),id);
         alarmHATT.Alarm();
-        Toast.makeText(this, "dd", Toast.LENGTH_SHORT).show();
-        Log.d("sdjang","after");
-        */
-
     }
 
     //학식 보기 버튼
@@ -95,13 +91,11 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if(dataSnapshot.child("UserList").child(tid).child("alarm").getValue().toString().equals("on")){
-                        Log.d("sdjang","alarm on");
                         alarmOnoff = true;
 
                     }
 
                     else {
-                        Log.d("sdjang","alarm off");
                         alarmOnoff = false;
                     }
                     alarmText = dataSnapshot.child("UserList").child(tid).child("alarmtext").getValue().toString();
@@ -119,26 +113,30 @@ public class MainActivity extends AppCompatActivity {
 
 
         public void Alarm() {
-            Log.d("sdjang","Alarm() in");
-            if(alarmOnoff) {
-                Log.d("sdjang","alarmOnoff==true");
-                am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                Intent intentalarm = new Intent(MainActivity.this, BroadcastD.class);
+            //if(alarmOnoff) {
 
-                PendingIntent sender = PendingIntent.getBroadcast(MainActivity.this, 0, intentalarm, 0);
+            try{
+                Thread.sleep(300);
+            }catch(InterruptedException e){
+
+            }
+                am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                Intent intentalarm = new Intent("com.example.amdin.menuselector.ALARM_START");
+                //id를 만들어서 넣어주쟈
+                PendingIntent sender = PendingIntent.getBroadcast(MainActivity.this, 0, intentalarm, PendingIntent.FLAG_UPDATE_CURRENT);
                 Calendar calendar = Calendar.getInstance();
                 //알람시간 calendar에 set해주기
 
-                //calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), 3, 1, 0);
-                calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), alarmhours, alarmmin, 0);
-                Log.d("sdjang","alarm set");
-                Toast.makeText(getApplicationContext(), "alarmsetting hours = "+ alarmhours + "min = " +alarmmin, Toast.LENGTH_LONG).show();
+                calendar.set( 11, 45, 0);
+                //calendar.set(alarmhours, alarmmin, 0);
+
+                //Toast.makeText(getApplicationContext(), "alarmsetting hours = "+ alarmhours + "min = " +alarmmin, Toast.LENGTH_LONG).show();
                 //알람 예약
                 am.cancel(sender);
-
+                Log.d("sdjang","Alarm set");
                 am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);
                 am.cancel(sender);
-            }
+            //}
         }
     }
 
