@@ -4,42 +4,43 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/ba01"
     tools:context="com.example.amdin.menuselector.MainActivity">
 
     <ImageButton
         android:id="@+id/displaybtn"
-        android:layout_width="310dp"
+        android:layout_width="290dp"
         android:layout_height="70dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="61dp"
         android:onClick="onButtonDisplay"
-        app:srcCompat="@drawable/button_menu" />
+        app:srcCompat="@drawable/menu_button" />
 
     <ImageButton
         android:id="@+id/selectbtn"
-        android:layout_width="310dp"
+        android:layout_width="290dp"
         android:layout_height="70dp"
         android:layout_alignStart="@+id/displaybtn"
         android:layout_below="@+id/displaybtn"
         android:layout_marginTop="31dp"
         android:onClick="onButtonSelect"
-        app:srcCompat="@drawable/button_recommand" />
+        app:srcCompat="@drawable/recommand_button" />
 
     <ImageButton
         android:id="@+id/foodsettingbtn"
-        android:layout_width="310dp"
+        android:layout_width="290dp"
         android:layout_height="70dp"
         android:layout_alignStart="@+id/selectbtn"
         android:layout_below="@+id/selectbtn"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="33dp"
         android:onClick="onButtonFoodSetting"
-        app:srcCompat="@drawable/button_mymenu" />
+        app:srcCompat="@drawable/mymenu_button" />
 
     <ImageButton
         android:id="@+id/settingbtn"
-        android:layout_width="310dp"
-        android:layout_height="70dp"
+        android:layout_width="290dp"
+        android:layout_height="62dp"
         android:layout_alignStart="@+id/foodsettingbtn"
         android:layout_below="@+id/foodsettingbtn"
         android:layout_marginTop="31dp"
