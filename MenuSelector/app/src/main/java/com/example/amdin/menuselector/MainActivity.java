@@ -66,10 +66,12 @@ public class MainActivity extends AppCompatActivity {
 
         }
         */
+        /*
         int i=0;
         while(i<50000){
             i++;
         }
+        */
 
         Log.d("sdjang","reunme   alarmhour"+alarmhours);
         Log.d("sdjang","resume   alarmmin"+alarmmin);
@@ -137,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
                 Calendar calendar = Calendar.getInstance();
                 //알람시간 calendar에 set해주기
 
+
                 long a, b;
                 a = calendar.getTimeInMillis();
                 Log.d("sdjang","alarm min= "+a);
@@ -151,6 +154,10 @@ public class MainActivity extends AppCompatActivity {
                 long c = b-a;
                 Log.d("sdjang","getTimeMills - ="+c );//이게 양수가 나와야되
 
+
+                calendar.set(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DAY_OF_MONTH),
+                        Integer.parseInt(alarmhours),Integer.parseInt(alarmmin),0);
+                //calendar.set(alarmhours, alarmmin, 0);
                 //알람 예약
                 am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),24*60*60*1000, sender);
 
