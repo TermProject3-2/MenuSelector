@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
                 //알람시간 calendar에 set해주기
 
                 calendar.set(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DAY_OF_MONTH),
-                        17,20,0);
+                        17,41,0);
                 //calendar.set(alarmhours, alarmmin, 0);
                 //알람 예약
                 Log.d("sdjang",""+calendar.getTimeInMillis());
