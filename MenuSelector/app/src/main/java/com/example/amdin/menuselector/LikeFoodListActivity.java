@@ -60,7 +60,6 @@ public class LikeFoodListActivity extends AppCompatActivity {
                 for (int i = 0; i < menuCount; i++) {
                     if (dataSnapshot.child("UserList").child(id).child("preference").child("" + i).exists()) {
                         preference[i] = dataSnapshot.child("UserList").child(id).child("preference").child("" + i).getValue().toString();
-                        System.out.println("preference get ! : " + preference[i]);
                     } else {
                         preference[i] = null;
                     }

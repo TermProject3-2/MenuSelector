@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.Image;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -81,9 +82,17 @@ public class MenuDetailActivity extends AppCompatActivity {
             preferenceButton.setImageResource(R.drawable.nomal_like_button);
 
 
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
         preferenceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 if(preference.equals("Normal")) {
                     new ChangeDB().changeDataForDB(myRef, menuPosition, "x", "x", "+", "Like", id);
                     preference = "Like"; //preference 객체는 전달받은 복사값일 뿐 실제 DB의 preference의 레퍼런스가 아니다.
@@ -114,8 +123,6 @@ public class MenuDetailActivity extends AppCompatActivity {
                 });
             }
         });
-
-
     }
 
 }

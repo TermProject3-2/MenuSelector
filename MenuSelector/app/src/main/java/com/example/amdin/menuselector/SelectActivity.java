@@ -60,8 +60,6 @@ public class SelectActivity extends AppCompatActivity {
         firebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseStorage = FirebaseStorage.getInstance();
         myRef = firebaseDatabase.getReference("MenuList");
-        Toast.makeText(SelectActivity.this, id, Toast.LENGTH_SHORT).show();
-
 
     }
 
