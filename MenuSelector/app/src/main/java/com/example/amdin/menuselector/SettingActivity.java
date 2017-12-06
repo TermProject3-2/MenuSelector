@@ -4,17 +4,12 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewAnimationUtils;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
-import android.widget.ViewAnimator;
+
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -161,10 +156,12 @@ public class SettingActivity extends AppCompatActivity {
         editMesageView.setText("");
         alarmMessageSetLayout.setVisibility(View.GONE);
     }
+
     public void onClickTimeSetting(View v){
-        /*
+
         myRef.child("UserList").child(id).child("alarmhours").setValue(timePicker.getHour());
         myRef.child("UserList").child(id).child("alarmmin").setValue(timePicker.getMinute());
-        */ //이부분은 minsdk가 23 부터이기 때문에 최종본에서는 minsdk를 23 이상으로 할것
+        timePickerLayout.setVisibility(View.GONE);
+         //이부분은 minsdk가 23 부터이기 때문에 최종본에서는 minsdk를 23 이상으로 할것
     }
 }

@@ -1,8 +1,6 @@
 package com.example.amdin.menuselector;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
+
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -13,7 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.amdin.menuselector.myAlarm.BroadcastD;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -25,9 +23,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.w3c.dom.Text;
-
-import java.util.Calendar;
 import java.util.StringTokenizer;
 
 public class LoginActivity extends AppCompatActivity {
@@ -62,10 +57,7 @@ public class LoginActivity extends AppCompatActivity {
                 if(user != null) {
                     Log.d("login success", "onAuthStateChanged: singned_in" + user.getUid());
                 }else{
-                    /*
-                    Toast.makeText(getApplicationContext(), "로그인 실패", Toast.LENGTH_SHORT).show();
-                    Log.d("login failed", "onAuthStateChanged: singned_out");
-                    */
+
                 }
 
             }
@@ -87,6 +79,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void onButtonLogin(View v){
+
         // 로그인 메소드 만들고 if문 추가할것!!!!!!
         email = ((EditText)findViewById(R.id.editId)).getText().toString();
         password = ((EditText)findViewById(R.id.editPass)).getText().toString();
@@ -98,24 +91,37 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this,"로그인 실패",Toast.LENGTH_SHORT).show();
                 }
                 else if(task.isSuccessful()){
+                    FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+                    DatabaseReference myRef= firebaseDatabase.getReference("MenuList");
+                    myRef.addListenerForSingleValueEvent(new ValueEventListener(){
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            StringTokenizer st = new StringTokenizer(email,".");
+                            String alarmOnoff;
+                            email= st.nextToken();
 
-                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                    StringTokenizer st = new StringTokenizer(email,".");
-                    email= st.nextToken();
-                    intent.putExtra("id",email);
-                    intent.putExtra("pass", password);
-                    startActivity(intent);
-
+                            if(dataSnapshot.child("UserList").child(email).child("alarm").getValue().toString().equals("on")){
+                                alarmOnoff = "on";
+                            }
+                            else {
+                                alarmOnoff = "off";
+                            }
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            intent.putExtra("id",email)
+                                    .putExtra("alarm",alarmOnoff);
+                            startActivity(intent);
+                        }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });
                 }
             }
         });
     }
-
     public void onButtonSignUp(View v){
         Intent intent = new Intent(getApplicationContext(), SingUpActivity.class);
         startActivity(intent);
     }
-
-
 
 }
