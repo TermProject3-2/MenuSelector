@@ -10,6 +10,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,11 +35,12 @@ public class SelectActivity extends AppCompatActivity {
     private FirebaseStorage mFirebaseStorage;
     private ImageView mImg;
     private String id;
-    private Bitmap bmp,resizedBmp;
+    private Bitmap bmp;
     private TextView textPrice , textFoodName, textFoodLikeNum;
-    private String foodPrice, foodName, foodImgUri,preference ;
+    private String foodPrice, foodName, foodImgUri, preName ;
     private Button selectbtn;
     private int foodLikeNum;
+    private CheckBox checkLike;
 
     private boolean selectFlag = true;
     private Vector<String> likeMenuNum;
@@ -54,7 +56,7 @@ public class SelectActivity extends AppCompatActivity {
         textFoodLikeNum = (TextView)findViewById(R.id.select_likenum);
         selectbtn = (Button)findViewById(R.id.select_selectbtn);
         mImg = (ImageView) findViewById(R.id.select_image);
-
+        checkLike = (CheckBox)findViewById(R.id.select_likecheck);
 
         Intent intent = getIntent();
         id = intent.getStringExtra("id");
@@ -117,20 +119,42 @@ public class SelectActivity extends AppCompatActivity {
                 Log.d("sdjang","get Key get Key");
                 int menuCount = Integer.parseInt(dataSnapshot.child("MenuCount").getValue().toString());
                 likeMenuNum = new Vector<>();
-                for(int i=0; i<menuCount; i++){
-                    if(dataSnapshot.child("UserList").child(id).child("preference").child(""+i).exists())
-                        likeMenuNum.add("menu"+i);
+                if(checkLike.isChecked()) {
+                    for (int i = 0; i < menuCount; i++) {
+                        if (dataSnapshot.child("UserList").child(id).child("preference").child("" + i).exists())
+                            likeMenuNum.add("menu" + i);
+                    }
                 }
-                String rannum = likeMenuNum.get((int)(Math.random()*likeMenuNum.size()));
+                else if(!checkLike.isChecked()){
+                    for (int i = 0; i < menuCount; i++) {
+                            likeMenuNum.add("menu" + i);
+                    }
+                }
+
+                String rannum;
+                while(true) {
+                    rannum = likeMenuNum.get((int) (Math.random() * likeMenuNum.size()));
+                    if(!selectFlag && !rannum.equals(preName)) {
+                        break;
+                    }
+                }
                 foodName = dataSnapshot.child(rannum).child("MenuName").getValue().toString();
                 foodPrice = dataSnapshot.child(rannum).child("Price").getValue().toString();
                 foodImgUri = dataSnapshot.child(rannum).child("ImageURI").getValue().toString();
                 foodLikeNum = Integer.parseInt(dataSnapshot.child(rannum).child("LikeNum").getValue().toString());
                 extractionImageFromStorage(foodName, foodImgUri,"Like",foodLikeNum,getApplicationContext());
 
+
+                try {
+                    Thread.sleep(1300);
+                }catch(InterruptedException e){
+
+                }
                 textFoodName.setText(foodName);
                 textPrice.setText(foodPrice);
                 textFoodLikeNum.setText(foodLikeNum+"");
+                preName = new String();
+                preName = foodName.trim();
             }
 
             @Override
@@ -138,15 +162,6 @@ public class SelectActivity extends AppCompatActivity {
 
             }
         });
-
-        /*
-        try {
-            Thread.sleep(2000);
-        }catch(InterruptedException e){
-
-        }
-        */
-        //textPrice.setText(foodPrice);
 
         if(selectFlag) {
             selectbtn.setText("reselect");

@@ -34,8 +34,11 @@
         <activity android:name=".SingUpActivity"
             android:parentActivityName=".LoginActivity"/>
 
-        <receiver android:name=".myAlarm.BroadcastD" />
-
+        <receiver android:name=".myAlarm.BroadcastD" >
+            <intent-filter>
+                <action android:name="com.example.amdin.menuselector.ALARM_START"/>
+            </intent-filter>
+        </receiver>
         <activity android:name=".MyMenu.MenuDetailActivity"
             android:parentActivityName=".DisplayActivity"
             android:theme="@style/MenuDetailTheme" >

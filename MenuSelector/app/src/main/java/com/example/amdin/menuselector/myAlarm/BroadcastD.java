@@ -6,8 +6,12 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.NotificationCompat;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.example.amdin.menuselector.LoginActivity;
+import com.example.amdin.menuselector.MainActivity;
 import com.example.amdin.menuselector.R;
 
 /**
@@ -21,8 +25,21 @@ public class BroadcastD extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {//알람 시간이 되었을때 onReceive를 호출함
         //NotificationManager 안드로이드 상태바에 메세지를 던지기위한 서비스 불러오고
         NotificationManager notificationmanager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context,0,new Intent(context, LoginActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+        Log.i("sdjang","broadcast on");
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
+        .setSmallIcon(R.drawable.common_google_signin_btn_icon_light)
+        .setContentTitle("Notification")
+        .setContentText("Notification Message")
+        .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE)
+        .setContentIntent(pendingIntent)
+        .setAutoCancel(true);
+        Toast.makeText(context, "알람알람", Toast.LENGTH_SHORT).show();
+       notificationmanager.notify(0,mBuilder.build());
 
-        Notification.Builder builder = new Notification.Builder(context);
+
+
+        /* Notification.Builder builder = new Notification.Builder(context);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, new Intent(context, LoginActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -35,5 +52,6 @@ public class BroadcastD extends BroadcastReceiver {
         builder.setAutoCancel(true);
 
         notificationmanager.notify(1, builder.build());
+        */
     }
 }
