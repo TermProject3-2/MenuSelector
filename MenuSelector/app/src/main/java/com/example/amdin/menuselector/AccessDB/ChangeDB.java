@@ -33,7 +33,6 @@ public class ChangeDB {
                     int LikeNum = Integer.parseInt(mutableData.getValue(String.class));
                        LikeNum++;
                     mutableData.setValue(""+LikeNum);
-                    System.out.println("+ LikeNum test ! : " + LikeNum);
                     return Transaction.success(mutableData);
                 }
                 @Override
@@ -50,7 +49,6 @@ public class ChangeDB {
                     if(LikeNum > 0)
                         LikeNum--;
                     mutableData.setValue(""+LikeNum);
-                    System.out.println("- LikeNum test ! : " + LikeNum);
                     return Transaction.success(mutableData);
                 }
                 @Override

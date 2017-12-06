@@ -28,7 +28,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class DisplayActivity extends AppCompatActivity {
 
@@ -58,7 +57,6 @@ public class DisplayActivity extends AppCompatActivity {
         id = intent.getExtras().getString("id");
         pass = intent.getExtras().getString("pass");
 
-        System.out.println("iidd : " + id );
 
 
         /*
@@ -84,12 +82,10 @@ public class DisplayActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 menuCount = Integer.parseInt(dataSnapshot.child("MenuCount").getValue().toString());
                 preference = new String[menuCount];
-                System.out.println("id test : " + id);
                 for(int i = 0; i <  menuCount; i++) {
 
                     if (dataSnapshot.child("UserList").child(id).child("preference").child("" + i).exists()){
                         preference[i] = dataSnapshot.child("UserList").child(id).child("preference").child(""+i).getValue().toString();
-                        System.out.println("preference get ! : " + preference[i]);
                     }
                     else {
                         preference[i] = null;
@@ -129,7 +125,6 @@ public class DisplayActivity extends AppCompatActivity {
                         for (int i = 0; i < menuCount; i++) {
                             if (dataSnapshot.child("preference").child("" + i).exists()){
                                 preference[i] = dataSnapshot.child("preference").child(""+i).getValue().toString();
-                                System.out.println("preference get ! : " + preference[i]);
                             }
                             else
                                 preference[i] = null;
@@ -189,7 +184,6 @@ public class DisplayActivity extends AppCompatActivity {
     //이미지 URI의 변경으로 인한 사진변경은 즉시반영 안함. 이전 액티비티를 갔다가 다시 돌아올때 적용
     public  void notifyToAdapter(final int menuNum, final String menuName, String imageURI, final String preference, final int likeNum, int price){
          if(contacts != null) {
-             System.out.println("contact is null !!!!!!!!!!!!!");
              Contact contact = contacts.get(menuNum);
              contact.setLikeNum(likeNum);
              contact.setMenuName(menuName);
@@ -200,8 +194,6 @@ public class DisplayActivity extends AppCompatActivity {
 
              if (adapter != null)
                  adapter.notifyItemChanged(menuNum);
-             else
-                 System.out.println("!!!!!!!!!!!!!!! adapter is null !!!!!!!!!!!!!");
          }
        }
 
