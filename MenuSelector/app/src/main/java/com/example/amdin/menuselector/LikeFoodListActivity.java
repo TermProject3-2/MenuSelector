@@ -47,7 +47,6 @@ public class LikeFoodListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_like_food_list);
 
-        setTitle("My Favorite Menu List");
         likeFoodContacts = (RecyclerView) findViewById(R.id.likeFoodContacts);
         mFirebaseStorage = FirebaseStorage.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
