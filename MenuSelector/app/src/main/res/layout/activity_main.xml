@@ -8,42 +8,42 @@
 
     <ImageButton
         android:id="@+id/displaybtn"
-        android:layout_width="70dp"
+        android:layout_width="310dp"
         android:layout_height="70dp"
-        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="83dp"
-        android:layout_marginTop="128dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="61dp"
         android:onClick="onButtonDisplay"
-        app:srcCompat="?android:attr/fingerprintAuthDrawable" />
+        app:srcCompat="@drawable/button_menu" />
 
     <ImageButton
         android:id="@+id/selectbtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/displaybtn"
-        android:layout_marginStart="91dp"
-        android:layout_toEndOf="@+id/displaybtn"
+        android:layout_width="310dp"
+        android:layout_height="70dp"
+        android:layout_alignStart="@+id/displaybtn"
+        android:layout_below="@+id/displaybtn"
+        android:layout_marginTop="31dp"
         android:onClick="onButtonSelect"
-        app:srcCompat="@android:drawable/btn_star_big_on" />
+        app:srcCompat="@drawable/button_recommand" />
 
     <ImageButton
         android:id="@+id/foodsettingbtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/displaybtn"
-        android:layout_marginTop="85dp"
-        android:layout_toStartOf="@+id/selectbtn"
+        android:layout_width="310dp"
+        android:layout_height="70dp"
+        android:layout_alignStart="@+id/selectbtn"
+        android:layout_below="@+id/selectbtn"
+        android:layout_marginTop="32dp"
         android:onClick="onButtonFoodSetting"
-        app:srcCompat="@mipmap/ic_launcher" />
+        app:srcCompat="@drawable/button_mymenu" />
 
     <ImageButton
         android:id="@+id/settingbtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/selectbtn"
-        android:layout_alignTop="@+id/foodsettingbtn"
+        android:layout_width="310dp"
+        android:layout_height="70dp"
+        android:layout_alignStart="@+id/foodsettingbtn"
+        android:layout_below="@+id/foodsettingbtn"
+        android:layout_marginTop="31dp"
         android:onClick="onButtonSetting"
-        app:srcCompat="@android:drawable/btn_star_big_on" />
+        app:srcCompat="@drawable/button_setting" />
 
 </RelativeLayout>
