@@ -22,6 +22,7 @@ import java.util.StringTokenizer;
 
 public class MainActivity extends AppCompatActivity {
     private String id,pass;
+    private String alarmOnoff, alarmhours,alarmmin;
     private HashMap<String, Object> preferenceMap;
 
 
@@ -31,9 +32,49 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Intent intent = getIntent();
         id = intent.getStringExtra("id");
-        pass = intent.getStringExtra("pass");
+        alarmOnoff = intent.getStringExtra("alarm");
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("sdjang","onResume 실행");
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference myRef= firebaseDatabase.getReference("MenuList");
+        myRef.addValueEventListener(new ValueEventListener(){
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(alarmOnoff.equals("on")) {
+                    alarmhours = dataSnapshot.child("UserList").child(id).child("alarmhours").getValue().toString();
+                    alarmmin = dataSnapshot.child("UserList").child(id).child("alarmmin").getValue().toString();
+                    while(true){
+                        if(!alarmhours.equals("") && !alarmmin.equals(""))
+                            break;
+                    }
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        }) ;
+        /*
+        try {
+            Thread.sleep(1000);
+        }catch(InterruptedException e){
+
+        }
+        */
+        int i=0;
+        while(i<50000){
+            i++;
+        }
+
+        Log.d("sdjang","reunme   alarmhour"+alarmhours);
+        Log.d("sdjang","resume   alarmmin"+alarmmin);
         AlarmHATT alarmHATT =  new AlarmHATT(getApplicationContext(),id);
+
         alarmHATT.Alarm();
     }
 
@@ -73,50 +114,21 @@ public class MainActivity extends AppCompatActivity {
         private AlarmManager am;
         private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         private DatabaseReference myRef= firebaseDatabase.getReference("MenuList");
-        private int alarmhours, alarmmin;
-        private boolean alarmOnoff;
-        private String alarmText;
         private StringTokenizer st;
         String tid;
         public AlarmHATT(Context context,String id) {
             st = new StringTokenizer(id,".");
             this.context = context;
             tid = st.nextToken();
-            /*
-            myRef.addListenerForSingleValueEvent(new ValueEventListener(){
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if(dataSnapshot.child("UserList").child(tid).child("alarm").getValue().toString().equals("on")){
-                        alarmOnoff = true;
 
-                    }
 
-                    else {
-                        alarmOnoff = false;
-                    }
-                    alarmText = dataSnapshot.child("UserList").child(tid).child("alarmtext").getValue().toString();
-                    alarmhours = Integer.parseInt(dataSnapshot.child("UserList").child(tid).child("alarmhours").getValue().toString());
-                    alarmmin = Integer.parseInt(dataSnapshot.child("UserList").child(tid).child("alarmmin").getValue().toString());
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-            */
         }
 
 
 
         public void Alarm() {
-            //if(alarmOnoff) {
+            if(alarmOnoff.equals("on")) {
 
-            try{
-                Thread.sleep(300);
-            }catch(InterruptedException e){
-
-            }
                 am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
                 Intent intentalarm = new Intent(context,BroadcastD.class);
                 intentalarm.putExtra("id",id);
@@ -125,20 +137,24 @@ public class MainActivity extends AppCompatActivity {
                 Calendar calendar = Calendar.getInstance();
                 //알람시간 calendar에 set해주기
 
-                calendar.set(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DAY_OF_MONTH),
-                        17,20,0);
-                //calendar.set(alarmhours, alarmmin, 0);
-                //알람 예약
-                Log.d("sdjang",""+calendar.getTimeInMillis());
-                Log.d("sdjang","Year = "+calendar.get(Calendar.YEAR));
-                Log.d("sdjang","Month = "+ calendar.get(Calendar.MONTH));
-                Log.d("sdjang","Day = "+ calendar.get(Calendar.DAY_OF_MONTH));
-                Log.d("sdjang","hour = "+ calendar.get(Calendar.HOUR_OF_DAY));
-                Log.d("sdjang","min = "+ calendar.get(Calendar.MINUTE));
-                Log.d("sdjang","second = "+ calendar.get(Calendar.SECOND));
-                am.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);
+                long a, b;
+                a = calendar.getTimeInMillis();
+                Log.d("sdjang","alarm min= "+a);
+                Log.d("sdjang","alarmhour"+alarmhours);
+                Log.d("sdjang","alarmmin"+alarmmin);
+                //calendar.set(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DAY_OF_MONTH),18,18,0);
+                calendar.set(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DAY_OF_MONTH),Integer.parseInt(alarmhours), Integer.parseInt(alarmmin), 0);
 
-            //}
+
+                b = calendar.getTimeInMillis();
+                Log.d("sdjang","after set = "+b);
+                long c = b-a;
+                Log.d("sdjang","getTimeMills - ="+c );//이게 양수가 나와야되
+
+                //알람 예약
+                am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),24*60*60*1000, sender);
+
+            }
         }
     }
 
