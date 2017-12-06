@@ -109,20 +109,21 @@ public class SelectActivity extends AppCompatActivity {
     }
 
 
-
-
     public void onSelectClick(View v){
-        Log.d("sdjang","button click!");
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d("sdjang","get Key get Key");
                 int menuCount = Integer.parseInt(dataSnapshot.child("MenuCount").getValue().toString());
                 likeMenuNum = new Vector<>();
                 if(checkLike.isChecked()) {
                     for (int i = 0; i < menuCount; i++) {
-                        if (dataSnapshot.child("UserList").child(id).child("preference").child("" + i).exists())
+                        if (dataSnapshot.child("UserList").child(id).child("preference").child("" + i).exists()) {
                             likeMenuNum.add("menu" + i);
+                        }
+                    }
+                    if(likeMenuNum.size()<3){
+                        Toast.makeText(SelectActivity.this, "좋아요를 누른 메뉴가 3개 미만입니다. 조금만 더 눌러 주세요~", Toast.LENGTH_SHORT).show();
+                        return;
                     }
                 }
                 else if(!checkLike.isChecked()){
@@ -131,10 +132,12 @@ public class SelectActivity extends AppCompatActivity {
                     }
                 }
 
+
                 String rannum;
                 while(true) {
                     rannum = likeMenuNum.get((int) (Math.random() * likeMenuNum.size()));
-                    if(!selectFlag && !rannum.equals(preName)) {
+
+                    if(selectFlag || !rannum.equals(preName)) {
                         break;
                     }
                 }
@@ -144,17 +147,20 @@ public class SelectActivity extends AppCompatActivity {
                 foodLikeNum = Integer.parseInt(dataSnapshot.child(rannum).child("LikeNum").getValue().toString());
                 extractionImageFromStorage(foodName, foodImgUri,"Like",foodLikeNum,getApplicationContext());
 
-
                 try {
                     Thread.sleep(1300);
                 }catch(InterruptedException e){
 
                 }
                 textFoodName.setText(foodName);
-                textPrice.setText(foodPrice);
+                textPrice.setText(foodPrice+"원");
                 textFoodLikeNum.setText(foodLikeNum+"");
                 preName = new String();
                 preName = foodName.trim();
+                if(selectFlag) {
+                    selectbtn.setText("reselect");
+                    selectFlag = false;
+                }
             }
 
             @Override
@@ -162,10 +168,6 @@ public class SelectActivity extends AppCompatActivity {
 
             }
         });
-
-        if(selectFlag) {
-            selectbtn.setText("reselect");
-            selectFlag = false;
-        }
+        
     }
 }
