@@ -15,22 +15,23 @@
         android:paddingBottom="10dp"
         android:paddingTop="10dp">
 
-        <ImageButton
-            android:id="@+id/image_button"
+        <ImageView
+            android:id="@+id/likeFoodImage"
             android:layout_width="180dp"
             android:layout_height="100dp"
-            android:layout_weight="1"
             android:layout_marginLeft="10dp"
+            android:layout_weight="1"
             card_view:srcCompat="@android:drawable/btn_star" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:layout_marginLeft="10dp"
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/menuName"
+                android:id="@+id/foodName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
@@ -39,33 +40,26 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
                 android:layout_weight="1"
+                android:layout_marginLeft="20dp"
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/textView"
-                    android:layout_width="61dp"
+                    android:id="@+id/textView2"
+                    android:layout_width="96dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.3"
+                    android:layout_weight="1"
                     android:text="좋아요" />
 
                 <TextView
-                    android:id="@+id/likeNum"
+                    android:id="@+id/foodLikeNum"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.7" />
+                    android:layout_weight="1" />
             </LinearLayout>
 
             <TextView
-                android:id="@+id/personalPreference"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_weight="1" />
-
-            <TextView
-                android:id="@+id/price"
+                android:id="@+id/foodprice"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"

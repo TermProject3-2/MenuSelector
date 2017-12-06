@@ -59,7 +59,8 @@ public class MainActivity extends AppCompatActivity {
 
     //학식설정 버튼
     public void onButtonFoodSetting(View v){
-        Intent intent = new Intent(getApplicationContext(),FoodSettingActivity.class);
+        Intent intent = new Intent(getApplicationContext(),LikeFoodListActivity.class);
+        intent.putExtra("id", id);
         startActivity(intent);
     }
 

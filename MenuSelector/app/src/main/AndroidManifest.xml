@@ -26,7 +26,7 @@
             android:name=".SelectActivity"
              />
         <activity
-            android:name=".FoodSettingActivity"
+            android:name=".LikeFoodListActivity"
              />
         <activity
             android:name=".SettingActivity"

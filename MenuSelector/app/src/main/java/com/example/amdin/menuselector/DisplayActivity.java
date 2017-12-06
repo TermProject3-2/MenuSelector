@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -59,18 +60,22 @@ public class DisplayActivity extends AppCompatActivity {
 
         System.out.println("iidd : " + id );
 
-/*
-메뉴넣기용 데이터 삽입코드
-        for(int i = 0; i < 4; i++) {
+
+        /*
+        int pr = 3000;
+        int menuC = 10;
+        myRef.child("MenuCount").setValue(menuC+"")
+        for(int i = 0; i < menuC; i++) {
             HashMap<String, Object> posts = new HashMap<>();
             posts.put("MenuNumber", ""+i );
             posts.put("MenuName", "menu"+i);
-            posts.put("ImageURI", "gs://today-menu-selector.appspot.com/menu2.bmp");
+            posts.put("ImageURI", "gs://today-menu-selector.appspot.com/menu" + (i+1) +".bmp");
             posts.put("LikeNum", "0");
-            posts.put("Price", "3000");
+            posts.put("Price", (pr + (i*100))+"");
             myRef.child("menu"+i).setValue(posts);
         }
-*/
+        */
+
         // 아래의 A.코드가 이 리스너보다 위에 있어도 이 리스너의 preference가 먼저 참조 되는경우가 있다.
         // 처음 초기화를 위해 한번만 menuCount와 각 Contact를 만들고
         // 리사이클러뷰에 어댑터를 set( contact가 만들어지기 전에 set하면 안되기 때문에 setAdapter는 contacts가 만들어질때마다 불린다.)
@@ -179,7 +184,6 @@ public class DisplayActivity extends AppCompatActivity {
                 Log.d("menu count", "Failed to read value.");
             }
         });
-
     }
 
     //이미지 URI의 변경으로 인한 사진변경은 즉시반영 안함. 이전 액티비티를 갔다가 다시 돌아올때 적용
@@ -242,21 +246,23 @@ public class DisplayActivity extends AppCompatActivity {
                 bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
                 Bitmap resizedBmp = Bitmap.createScaledBitmap(bmp, 270, 300, true);
 
-                // 비트맵이 생성된게 먼저 contacts안에 들어갈경우 실제 contact의 포지션과 생성하려는 순서의 문제가 생기기 때문에 set메소드를 사용
+                // 비트맵이 생성된게 먼저 contacts안에 들어갈경우 실제 contact의 포지션과 생성하려는 순서의 문제가 생기기 때문에
+                // 미리 contacts를 메뉴개수만큼 만들어놓고 set을 사용하여 실질적으로 삽입
                 if(contacts == null) {
                     contacts = new ArrayList<Contact>();
                     for(int i = 0; i < menuCount; i++)
-                       contacts.add(new Contact("menu", "Normal", null, 0, 0));
+                       contacts.add(new Contact("menu", "Normal", null, 0, 0, i));
                 }
-                Contact contact = new Contact(menuName, preference, resizedBmp, likeNum, price);
+                Contact contact = new Contact(menuName, preference, resizedBmp, likeNum, price, menuNum);
                 contacts.set(menuNum, contact);
 
                 if(adapter == null)
-                    adapter = new ContactsAdapter(context, contacts, id);
+                    adapter = new ContactsAdapter(context, contacts, id, true);
 
                 rvContacts.setAdapter(adapter);
-                StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL);
-                rvContacts.setLayoutManager(gridLayoutManager);
+                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
+                rvContacts.setLayoutManager(linearLayoutManager);
+
 
                 RecyclerView.ItemDecoration itemDecoration = new
                         MarginItemDecoration(4);
