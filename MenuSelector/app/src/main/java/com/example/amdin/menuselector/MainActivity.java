@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import com.example.amdin.menuselector.myAlarm.BroadcastD;
@@ -32,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Intent intent = getIntent();
         id = intent.getStringExtra("id");
-
+<<<<<<< HEAD
         alarmOnoff = intent.getStringExtra("alarm");
     }
 
@@ -82,6 +81,11 @@ public class MainActivity extends AppCompatActivity {
             i++;
         }
         */
+
+
+        
+=======
+>>>>>>> 500b8a0d38bef495a1e04be25b7f30c6d79dcace
         AlarmHATT alarmHATT =  new AlarmHATT(getApplicationContext(),id);
         alarmHATT.Alarm();
     }
