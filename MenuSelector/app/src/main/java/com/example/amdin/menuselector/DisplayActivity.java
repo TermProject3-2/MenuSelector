@@ -255,6 +255,12 @@ public class DisplayActivity extends AppCompatActivity {
                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
                 rvContacts.setLayoutManager(linearLayoutManager);
 
+
+                RecyclerView.ItemDecoration itemDecoration = new
+                        MarginItemDecoration(4);
+                rvContacts.addItemDecoration(itemDecoration);
+                rvContacts.setHasFixedSize(true);
+
             }
          }).addOnFailureListener(new OnFailureListener() {
             @Override

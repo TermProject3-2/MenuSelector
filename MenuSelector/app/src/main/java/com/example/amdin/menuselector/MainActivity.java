@@ -41,27 +41,18 @@ public class MainActivity extends AppCompatActivity {
         Log.d("sdjang","onResume 실행");
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference myRef= firebaseDatabase.getReference("MenuList");
-
         myRef.addValueEventListener(new ValueEventListener(){
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
                 if(alarmOnoff.equals("on")) {
                     alarmhours = dataSnapshot.child("UserList").child(id).child("alarmhours").getValue().toString();
                     alarmmin = dataSnapshot.child("UserList").child(id).child("alarmmin").getValue().toString();
-                    Log.d("sdjang","reunme   alarmhour"+alarmhours);
-                    Log.d("sdjang","resume   alarmmin"+alarmmin);
-                    System.out.println("시간 분 :" + alarmhours + " / " + alarmmin);
-                   /*
                     while(true){
                         if(!alarmhours.equals("") && !alarmmin.equals(""))
                             break;
                     }
-                    */
 
                 }
-                else  Log.d("sdjang", "false!!!!!");
-
             }
 
             @Override
@@ -82,11 +73,17 @@ public class MainActivity extends AppCompatActivity {
         }
         */
 
+<<<<<<< HEAD
 
         
 =======
 >>>>>>> 500b8a0d38bef495a1e04be25b7f30c6d79dcace
+=======
+        Log.d("sdjang","reunme   alarmhour"+alarmhours);
+        Log.d("sdjang","resume   alarmmin"+alarmmin);
+>>>>>>> parent of db59219... JeongHaeCheol
         AlarmHATT alarmHATT =  new AlarmHATT(getApplicationContext(),id);
+
         alarmHATT.Alarm();
     }
 

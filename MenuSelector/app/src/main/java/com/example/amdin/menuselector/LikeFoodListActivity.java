@@ -138,6 +138,10 @@ public class LikeFoodListActivity extends AppCompatActivity {
                 likeFoodContacts.setAdapter(adapter);
                 StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
                 likeFoodContacts.setLayoutManager(gridLayoutManager);
+                RecyclerView.ItemDecoration itemDecoration = new
+                        MarginItemDecoration(4);
+                likeFoodContacts.addItemDecoration(itemDecoration);
+                likeFoodContacts.setHasFixedSize(true);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
