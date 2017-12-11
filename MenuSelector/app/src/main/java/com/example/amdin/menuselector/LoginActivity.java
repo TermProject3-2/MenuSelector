@@ -107,8 +107,8 @@ public class LoginActivity extends AppCompatActivity {
                                 alarmOnoff = "off";
                             }
                             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                            intent.putExtra("id",email)
-                                    .putExtra("alarm",alarmOnoff);
+                            intent.putExtra("id",email);
+                            intent.putExtra("alarm",alarmOnoff);
                             startActivity(intent);
                         }
                         @Override
