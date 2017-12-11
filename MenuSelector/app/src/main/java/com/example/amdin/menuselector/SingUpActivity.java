@@ -6,9 +6,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -29,13 +27,10 @@ import java.util.regex.Pattern;
 
 public class SingUpActivity extends AppCompatActivity {
 
-    private TextView textId;
-    private TextView textPass;
-    private TextView textPassConfirm;
+
     private EditText editId;
     private EditText editPass;
     private EditText editConfirm;
-    private Button btnSignUp;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener authStateListener;
     private FirebaseUser user;
@@ -50,9 +45,6 @@ public class SingUpActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sing_up);
 
         mAuth = FirebaseAuth.getInstance();
-        textId = (TextView)findViewById(R.id.textId);
-        textPass = (TextView)findViewById(R.id.textPass);
-        textPassConfirm = (TextView)findViewById(R.id.textPassConfirm);
         editId = (EditText) findViewById(R.id.editId);
         editPass = (EditText) findViewById(R.id.editPass);
         editConfirm = (EditText) findViewById(R.id.editConfirm);

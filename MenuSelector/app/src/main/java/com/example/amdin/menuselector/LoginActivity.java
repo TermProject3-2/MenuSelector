@@ -17,11 +17,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+
 
 import java.util.StringTokenizer;
 
@@ -59,7 +55,6 @@ public class LoginActivity extends AppCompatActivity {
                 }else{
 
                 }
-
             }
         };
     }
@@ -91,6 +86,7 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this,"로그인 실패",Toast.LENGTH_SHORT).show();
                 }
                 else if(task.isSuccessful()){
+<<<<<<< HEAD
                     FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
                     DatabaseReference myRef= firebaseDatabase.getReference("MenuList");
                     myRef.addListenerForSingleValueEvent(new ValueEventListener(){
@@ -115,6 +111,15 @@ public class LoginActivity extends AppCompatActivity {
                         public void onCancelled(DatabaseError databaseError) {
                         }
                     });
+=======
+
+                    StringTokenizer st = new StringTokenizer(email,".");
+                    email= st.nextToken();
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    intent.putExtra("id",email);
+                    startActivity(intent);
+
+>>>>>>> 500b8a0d38bef495a1e04be25b7f30c6d79dcace
                 }
             }
         });
