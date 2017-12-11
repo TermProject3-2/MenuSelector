@@ -59,11 +59,10 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
         }
     }
 
-    public ContactsAdapter(Context context, List<Contact> contacts, String id, boolean buttonOn) {
+    public ContactsAdapter(Context context, List<Contact> contacts, String id) {
         mContacts = contacts;
         mContext = context;
         this.id = id;
-        this.buttonOn = buttonOn;
     }
 
 
@@ -107,7 +106,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
         priceView.setText(price);
 
 
-        if(buttonOn) {
+
             imageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -124,7 +123,6 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
                     mContext.startActivity(intent);
                 }
             });
-        }
 
         //Button button = viewHolder.messageButton; 버튼 에다가 딜리트를 달아주는 작업 우리는 여기에다가 이미지를 달거야
         //button.setText("Delete");

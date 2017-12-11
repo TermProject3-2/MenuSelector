@@ -249,7 +249,7 @@ public class DisplayActivity extends AppCompatActivity {
                 contacts.set(menuNum, contact);
 
                 if(adapter == null)
-                    adapter = new ContactsAdapter(context, contacts, id, true);
+                    adapter = new ContactsAdapter(context, contacts, id);
 
                 rvContacts.setAdapter(adapter);
                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);

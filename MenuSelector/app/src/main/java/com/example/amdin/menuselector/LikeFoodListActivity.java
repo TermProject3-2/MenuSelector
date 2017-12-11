@@ -73,6 +73,7 @@ public class LikeFoodListActivity extends AppCompatActivity {
 
                         if (preference[i] != null)
                             extractionImageFromStorage(i, menuName, imageURI, "Like", likeNum, price, getApplicationContext());
+
                         Log.d("Data Change for oneTime", "Success to read value.");
                     }
                 }
@@ -81,6 +82,41 @@ public class LikeFoodListActivity extends AppCompatActivity {
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.d("Data Change for oneTime", "Failed to read value.");
+            }
+        });
+
+
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                menuCount = Integer.parseInt(dataSnapshot.child("MenuCount").getValue().toString());
+                preference = new String[menuCount];
+
+                for (int i = 0; i < menuCount; i++) {
+                    if (dataSnapshot.child("UserList").child(id).child("preference").child("" + i).exists()) {
+                        preference[i] = dataSnapshot.child("UserList").child(id).child("preference").child("" + i).getValue().toString();
+                    } else {
+                        preference[i] = null;
+                    }
+
+                    if (dataSnapshot.child("menu" + i).exists()) { //메뉴 키가 존재할때만 데이터생성
+                     if(preference[i] == null && adapter != null) {
+                            System.out.println("test@@@@@@@@@@@@");
+                            for(int j = 0; j < contacts.size(); j++) {
+                                Contact contact = contacts.get(j);
+                                if(contact.getMenuNum() == i) {
+                                    adapter.removeItem(j);
+                                    adapter.notifyItemChanged(j);
+                                }
+                            }
+                        }
+                        Log.d("Data Change for oneTime", "Success to read value.");
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
             }
         });
 
@@ -130,10 +166,10 @@ public class LikeFoodListActivity extends AppCompatActivity {
                     contacts = new ArrayList<Contact>();
 
                 Contact contact = new Contact(menuName, preference, resizedBmp, likeNum, price, menuNum);
-                contacts.add(contact);
+                    contacts.add(contact);
 
                 if (adapter == null)
-                    adapter = new ContactsAdapter(context, contacts, id, false);
+                    adapter = new ContactsAdapter(context, contacts, id);
 
                 likeFoodContacts.setAdapter(adapter);
                 StaggeredGridLayoutManager gridLayoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
