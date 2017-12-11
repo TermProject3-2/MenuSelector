@@ -28,7 +28,7 @@ public class LoginActivity extends AppCompatActivity {
     EditText editPass;
     String email;
     String password;
-
+    private String htmlpageurl;
     private FirebaseAuth.AuthStateListener authStateListener;
     private FirebaseAuth mAuth;
 
@@ -44,6 +44,7 @@ public class LoginActivity extends AppCompatActivity {
         textPass = (TextView)findViewById(R.id.textPass);
         editId = (EditText)findViewById(R.id.editId);
         editPass = (EditText)findViewById(R.id.editPass);
+        htmlpageurl= "https://hansung.ac.kr/web/www/life_03_01_t1";
 
 
         authStateListener = new FirebaseAuth.AuthStateListener() {
@@ -86,32 +87,6 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this,"로그인 실패",Toast.LENGTH_SHORT).show();
                 }
                 else if(task.isSuccessful()){
-<<<<<<< HEAD
-                    FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-                    DatabaseReference myRef= firebaseDatabase.getReference("MenuList");
-                    myRef.addListenerForSingleValueEvent(new ValueEventListener(){
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            StringTokenizer st = new StringTokenizer(email,".");
-                            String alarmOnoff;
-                            email= st.nextToken();
-
-                            if(dataSnapshot.child("UserList").child(email).child("alarm").getValue().toString().equals("on")){
-                                alarmOnoff = "on";
-                            }
-                            else {
-                                alarmOnoff = "off";
-                            }
-                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                            intent.putExtra("id",email)
-                                    .putExtra("alarm",alarmOnoff);
-                            startActivity(intent);
-                        }
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                        }
-                    });
-=======
 
                     StringTokenizer st = new StringTokenizer(email,".");
                     email= st.nextToken();
@@ -119,7 +94,6 @@ public class LoginActivity extends AppCompatActivity {
                     intent.putExtra("id",email);
                     startActivity(intent);
 
->>>>>>> 500b8a0d38bef495a1e04be25b7f30c6d79dcace
                 }
             }
         });

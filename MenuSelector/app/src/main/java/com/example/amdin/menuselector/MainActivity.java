@@ -31,59 +31,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Intent intent = getIntent();
         id = intent.getStringExtra("id");
-<<<<<<< HEAD
-        alarmOnoff = intent.getStringExtra("alarm");
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Log.d("sdjang","onResume 실행");
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference myRef= firebaseDatabase.getReference("MenuList");
-        myRef.addValueEventListener(new ValueEventListener(){
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if(alarmOnoff.equals("on")) {
-                    alarmhours = dataSnapshot.child("UserList").child(id).child("alarmhours").getValue().toString();
-                    alarmmin = dataSnapshot.child("UserList").child(id).child("alarmmin").getValue().toString();
-                    while(true){
-                        if(!alarmhours.equals("") && !alarmmin.equals(""))
-                            break;
-                    }
-
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        }) ;
-        /*
-        try {
-            Thread.sleep(1000);
-        }catch(InterruptedException e){
-
-        }
-        */
-        /*
-        int i=0;
-        while(i<50000){
-            i++;
-        }
-        */
-
-<<<<<<< HEAD
-
-        
-=======
->>>>>>> 500b8a0d38bef495a1e04be25b7f30c6d79dcace
-=======
-        Log.d("sdjang","reunme   alarmhour"+alarmhours);
-        Log.d("sdjang","resume   alarmmin"+alarmmin);
->>>>>>> parent of db59219... JeongHaeCheol
         AlarmHATT alarmHATT =  new AlarmHATT(getApplicationContext(),id);
-
         alarmHATT.Alarm();
     }
 
