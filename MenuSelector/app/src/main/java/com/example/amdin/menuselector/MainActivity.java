@@ -7,23 +7,25 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.amdin.menuselector.myAlarm.BroadcastD;
+import com.example.amdin.menuselector.myAlarm.BroadcastPage;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.StringTokenizer;
+
 
 public class MainActivity extends AppCompatActivity {
     private String id;
-    private String alarmOnoff, alarmhours,alarmmin;
-    private HashMap<String, Object> preferenceMap;
-
+    private Context context;
+    private String alarmOnoff, alarmhours,alarmmin, htmlinfo, pageonchange;
+    private String htmlPageUrl = "https://hansung.ac.kr/web/www/life_03_01_t1";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,16 +63,17 @@ public class MainActivity extends AppCompatActivity {
     public void onButtonSetting(View v) {
         Intent intent = new Intent(getApplicationContext(),SettingActivity.class);
         intent.putExtra("id", id);
+        intent.putExtra("pageonchange",pageonchange);
         startActivity(intent);
+
     }
 
 
     public class AlarmHATT {
         private Context context;
-        private AlarmManager am;
+        private AlarmManager am,amMenuChange;
         private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         private DatabaseReference myRef= firebaseDatabase.getReference("MenuList");
-        private StringTokenizer st;
         public AlarmHATT(Context context,String id) {
             this.context = context;
         }
@@ -84,6 +87,8 @@ public class MainActivity extends AppCompatActivity {
                     alarmOnoff = dataSnapshot.child("UserList").child(id).child("alarm").getValue().toString();
                     alarmhours = dataSnapshot.child("UserList").child(id).child("alarmhours").getValue().toString();
                     alarmmin = dataSnapshot.child("UserList").child(id).child("alarmmin").getValue().toString();
+                    htmlinfo = dataSnapshot.child("UserList").child("pageinfo").child("pagetext").getValue().toString();
+                    pageonchange = dataSnapshot.child("UserList").child("pageinfo").child("pageonchange").getValue().toString();
                     if(alarmOnoff.equals("on")) {
                         am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
                         Intent intentalarm = new Intent(context,BroadcastD.class);
@@ -96,9 +101,33 @@ public class MainActivity extends AppCompatActivity {
                             calendar.add(Calendar.DAY_OF_MONTH,1);
                         }
                         am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),24*60*60*1000, sender);
-
                     }
+
+                    amMenuChange = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                    Intent intentalarm = new Intent(context,BroadcastPage.class);
+                    intentalarm.putExtra("id",id);
+                    intentalarm.putExtra("htmlinfo",htmlinfo);
+                    PendingIntent sender = PendingIntent.getBroadcast(context, 0, intentalarm, PendingIntent.FLAG_UPDATE_CURRENT);
+                    Calendar ccalendar = Calendar.getInstance();
+                    Calendar calendar = (Calendar)ccalendar.clone();
+                    calendar.set(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DAY_OF_MONTH),3,16, 0);
+                    //calendar.set(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DAY_OF_MONTH),Calendar.HOUR_OF_DAY,Calendar.MINUTE, Calendar.SECOND+15);
+                    if(ccalendar.after(calendar)){
+                        calendar.add(Calendar.DAY_OF_MONTH,1);
+                    }
+                    if(id.equals("test@gmail") || id.equals("vs@gmail")) {
+                        amMenuChange.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 24 * 60 * 60 * 1000, sender);
+                    }
+                    else
+                        amMenuChange.cancel(sender);
+                    /*
+                    if(id.equals("test@gmail") || id.equals("vs@gmail")) {
+                        if (dataSnapshot.child("UserList").child("pageinfo").child("pageonchange").getValue().toString().equals("changed"))
+                            Toast.makeText(context, "학식 게시판이 업데이트 되었습니다. 확인 해 주세요", Toast.LENGTH_LONG).show();
+                    }
+                    */
                 }
+
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {

@@ -82,14 +82,6 @@ public class BroadcastD extends BroadcastReceiver {
             }
         });
 
-
-
-
-
-
-
-
-
     }
     public void extractionImageFromStorage(final String menuName, String imageURI) {
         StorageReference storageRef = mFirebaseStorage.getReferenceFromUrl

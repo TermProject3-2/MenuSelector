@@ -40,6 +40,11 @@
                 <action android:name="com.example.amdin.menuselector.ALARM_START"/>
             </intent-filter>
         </receiver>
+        <receiver android:name=".myAlarm.BroadcastPage">
+            <intent-filter>
+                <action android:name="com.example.admin.menuselector.MENU_CHANGE"/>
+            </intent-filter>
+        </receiver>
         <activity android:name=".MyMenu.MenuDetailActivity"
             android:parentActivityName=".DisplayActivity"
             android:theme="@style/MenuDetailTheme" >
