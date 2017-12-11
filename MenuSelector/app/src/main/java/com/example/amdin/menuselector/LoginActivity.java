@@ -28,7 +28,7 @@ public class LoginActivity extends AppCompatActivity {
     EditText editPass;
     String email;
     String password;
-
+    private String htmlpageurl;
     private FirebaseAuth.AuthStateListener authStateListener;
     private FirebaseAuth mAuth;
 
@@ -44,6 +44,7 @@ public class LoginActivity extends AppCompatActivity {
         textPass = (TextView)findViewById(R.id.textPass);
         editId = (EditText)findViewById(R.id.editId);
         editPass = (EditText)findViewById(R.id.editPass);
+        htmlpageurl= "https://hansung.ac.kr/web/www/life_03_01_t1";
 
 
         authStateListener = new FirebaseAuth.AuthStateListener() {
