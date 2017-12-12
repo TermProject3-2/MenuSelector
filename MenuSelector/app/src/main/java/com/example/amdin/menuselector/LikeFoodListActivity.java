@@ -14,7 +14,6 @@ import android.util.Log;
 
 import com.example.amdin.menuselector.myRecycler.Contact;
 import com.example.amdin.menuselector.myRecycler.ContactsAdapter;
-import com.example.amdin.menuselector.myRecycler.MarginItemDecoration;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;

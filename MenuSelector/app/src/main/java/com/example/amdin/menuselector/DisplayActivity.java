@@ -8,15 +8,12 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.amdin.menuselector.myRecycler.Contact;
 import com.example.amdin.menuselector.myRecycler.ContactsAdapter;
-import com.example.amdin.menuselector.myRecycler.MarginItemDecoration;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -58,22 +55,6 @@ public class DisplayActivity extends AppCompatActivity {
         pass = intent.getExtras().getString("pass");
 
 
-
-        /*
-        int pr = 3000;
-        int menuC = 10;
-        myRef.child("MenuCount").setValue(menuC+"")
-        for(int i = 0; i < menuC; i++) {
-            HashMap<String, Object> posts = new HashMap<>();
-            posts.put("MenuNumber", ""+i );
-            posts.put("MenuName", "menu"+i);
-            posts.put("ImageURI", "gs://today-menu-selector.appspot.com/menu" + (i+1) +".bmp");
-            posts.put("LikeNum", "0");
-            posts.put("Price", (pr + (i*100))+"");
-            myRef.child("menu"+i).setValue(posts);
-        }
-        */
-
         // 아래의 A.코드가 이 리스너보다 위에 있어도 이 리스너의 preference가 먼저 참조 되는경우가 있다.
         // 처음 초기화를 위해 한번만 menuCount와 각 Contact를 만들고
         // 리사이클러뷰에 어댑터를 set( contact가 만들어지기 전에 set하면 안되기 때문에 setAdapter는 contacts가 만들어질때마다 불린다.)
@@ -111,8 +92,6 @@ public class DisplayActivity extends AppCompatActivity {
                 Log.d("Data Change for oneTime", "Failed to read value.");
             }
         });
-
-        // A.  선호도 변화시 preference 배열을 다시 받기 위해
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

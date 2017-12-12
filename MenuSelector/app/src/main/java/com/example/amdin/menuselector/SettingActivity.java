@@ -89,24 +89,6 @@ public class SettingActivity extends AppCompatActivity {
         });
 
 
-        /*
-        stb = new StringBuilder();
-        while(st.hasMoreTokens())
-            stb.append(st.nextToken());
-        id = stb.toString();
-        */ //이건 이름 입력을 어떻게 데이터베이스에 할지~
-
-        /*
-        HashMap<String, Object> postv = new HashMap<String, Object>();
-        for(int i = 0; i < 20; i++)
-            postv.put("menu"+i, "Normal");
-        postv.put("alarm","off");
-        postv.put("alarmtext","");
-        postv.put("alarmhours",0);
-        postv.put("alarmmin",0);
-        myRef.child("UserList").child(id).setValue(postv);
-        */ //data 삽입용 코드
-
         switchAlarm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

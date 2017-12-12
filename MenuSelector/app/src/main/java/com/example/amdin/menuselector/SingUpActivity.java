@@ -56,10 +56,7 @@ public class SingUpActivity extends AppCompatActivity {
                 if(user != null) {
                     Log.d("login success", "onAuthStateChanged: singned_in" + user.getUid());
                 }else{
-                    /*
-                    Toast.makeText(getApplicationContext(), "로그인 실패", Toast.LENGTH_SHORT).show();
-                    Log.d("login failed", "onAuthStateChanged: singned_out");
-                    */
+
                 }
 
             }

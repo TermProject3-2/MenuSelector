@@ -65,9 +65,9 @@ public class BroadcastPage extends BroadcastReceiver {
                 //테스트1
                 Elements titles = doc.select("div.journal-content-article");
                 htmlget = new String();
-                System.out.println("----------------broadcast--------------------------------------");
+
                 for (Element e : titles) {
-                    System.out.println("title: " + e.text());
+
                     htmlget += e.text().trim() + "\n";
                 }
                 myRef.child("pageinfo").child("pagetext").setValue(htmlget);

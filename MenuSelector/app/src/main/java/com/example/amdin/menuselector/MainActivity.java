@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
 import com.example.amdin.menuselector.myAlarm.BroadcastD;
 import com.example.amdin.menuselector.myAlarm.BroadcastPage;
@@ -120,15 +119,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                     else
                         amMenuChange.cancel(sender);
-                    /*
-                    if(id.equals("test@gmail") || id.equals("vs@gmail")) {
-                        if (dataSnapshot.child("UserList").child("pageinfo").child("pageonchange").getValue().toString().equals("changed"))
-                            Toast.makeText(context, "학식 게시판이 업데이트 되었습니다. 확인 해 주세요", Toast.LENGTH_LONG).show();
-                    }
-                    */
+
                 }
-
-
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                 }

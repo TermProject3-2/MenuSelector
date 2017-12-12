@@ -91,7 +91,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
         TextView personalPreferenceView = viewHolder.personalPreferenceView;
         TextView priceView = viewHolder.priceView;
 
-        final String MenuPosition = "" + contact.getMenuNum(); // position을 써버리면 메뉴번호가 아니라 순서에 의해 메뉴를 정의하기 때문에
+        final String MenuPosition = "" + contact.getMenuNum();
         final String MenuName = contact.getMenuName();
         final Bitmap MenuImageBitMap = contact.getImageBitmap();
         final String LikeNum = "" + contact.getLikeNum();
@@ -124,11 +124,9 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
                 }
             });
 
-        //Button button = viewHolder.messageButton; 버튼 에다가 딜리트를 달아주는 작업 우리는 여기에다가 이미지를 달거야
-        //button.setText("Delete");
     }
 
-    // Returns the total count of items in the list
+
     @Override
     public int getItemCount() {
         return mContacts.size();
